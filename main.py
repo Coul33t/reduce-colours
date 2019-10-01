@@ -122,13 +122,20 @@ def main():
     colours_lab = img_lab.getcolors()
     # Convert tuples into lists
     colours_lab = [[x[0], list(x[1])] for x in colours_lab]
+
+    # NEW METHOD:
+    # take the 4 most represented colours
+    # compute closeness to eahc colour, assign the closest one
     final_img = merge_colours(img_lab_data, final_colour_number, colours_lab)
+
     final_img = Image.fromarray(final_img, 'LAB')
 
     lab2rgb = ImageCms.buildTransformFromOpenProfiles(lab_p, srgb_p, "LAB", "RGB")
     final_img = ImageCms.applyTransform(final_img, lab2rgb)
 
     breakpoint()
+    # OLD METHOD
+
     # # k: original value
     # # v: replacement
     # replaced_colours = {}
