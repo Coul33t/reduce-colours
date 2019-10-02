@@ -12,5 +12,6 @@ This algorithm allows you to reduce the number of colours inside an original ima
 ### TODO:  
  * Args parser (input image and *n*)
  * GUI (selection of colours, colour picker, etc.)
+ * Allow to specify regions to exclude for the colour reduction
  * Continue developping the other method
  * Initial and final colours display in terminal with libtcod
