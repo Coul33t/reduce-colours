@@ -112,7 +112,7 @@ def dst(c1, c2):
 def main():
     final_colour_number = 4
     # img = cv2.imread('tortank.png')
-    img = Image.open('tortank.png').convert('RGB')
+    img = Image.open('dracaufeu.png').convert('RGB')
 
     # sRGB instead of RGB ([0, 1] instead of [0, 255])
     img_rgb_data = np.asarray(img) / 255
@@ -134,7 +134,7 @@ def main():
 
     final_img = Image.fromarray(final_img, mode='RGB')
     final_img.show()
-    final_img.save('tortank_reduced.png')
+    final_img.save('dracaufeu_reduced.png')
 
     # OLD METHOD
 
