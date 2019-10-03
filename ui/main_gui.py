@@ -31,6 +31,9 @@ class Ui_MainWindow(object):
         self.initial_img = None
         self.resized_img = None
         self.colours_to_display = None
+        self.final_colour_number = 0
+        self.model_listView_choosen_colours = None
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -96,11 +99,12 @@ class Ui_MainWindow(object):
         self.pushButton_go.setText(_translate("MainWindow", "Go!"))
 
     def initialise(self):
-        self.listView.setViewMode(QtGui.QListView.IconMode)
+        self.model_listView_choosen_colours = QtGui.QStandardItemModel(self.listView_choosen_colours)
 
     def link_components(self):
         self.pushButton_import.clicked.connect(self.select_file)
         self.pushButton_n_colours.clicked.connect(self.get_colours)
+        self.pushButton_go.clicked.connect(self.generate_output)
 
     def select_file(self):
         string = QtWidgets.QFileDialog.getOpenFileName(filter="Image Files (*.png *.jpg *.bmp)")
@@ -113,32 +117,48 @@ class Ui_MainWindow(object):
         size = list(np.asarray(self.initial_img).shape[:2])
         label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())
 
+        self.resized_img = resize_image(self.initial_img, label_size)
         resized = False
-
-        if size[0] > label_size[0] or size[1] > label_size[1]:
-            ratio = min(label_size[1]/size[1], label_size[0]/size[0])
-            size[0] = floor(size[0] * ratio)
-            size[1] = floor(size[1] * ratio)
-            resized = True
-
-        elif size[0] < label_size[0] or size[1] < label_size[1]:
-            ratio = min(label_size[1]/size[1], label_size[0]/size[0])
-            size[0] = floor(size[0] * ratio)
-            size[1] = floor(size[1] * ratio)
-            resized = True
-
-        self.resized_img = self.initial_img
-        if resized:
-            self.resized_img = self.initial_img.resize(size)
 
         self.resized_img = ImageQt.ImageQt(self.resized_img)
         reference_img = QtGui.QPixmap.fromImage(self.resized_img)
         self.label_original_image.setPixmap(reference_img)
 
     def get_colours(self):
-        #TODO: checks limits of original image number of colours
-        self.colours_to_display = get_colours(self.initial_img, self.spinBox_n_colours.value())
-        self.listView_choosen_colours
+        self.model_listView_choosen_colours.clear()
+        self.final_colour_number = self.spinBox_n_colours.value()
+        self.colours_to_display = get_colours(self.initial_img, self.final_colour_number)
+
+        if not self.colours_to_display:
+            return
+
+        # TODO: order the list by colour proximity (purely aesthetic)
+        for colour in self.colours_to_display:
+            # create an item with a caption
+            item = QtGui.QStandardItem()
+
+            item.setBackground(QtGui.QColor(int(colour[0]* 255) , int(colour[1]* 255), int(colour[2]* 255)))
+            # Add the item to the model
+            self.model_listView_choosen_colours.appendRow(item)
+
+        # Apply the model to the list view
+        self.listView_choosen_colours.setModel(self.model_listView_choosen_colours)
+
+    def generate_output(self):
+        new_img = merge_colours(self.initial_img, self.colours_to_display)
+        size = list(np.asarray(new_img).shape[:2])
+        label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())
+
+        new_img = np.asarray(new_img * 255, 'uint8')
+        new_img = Image.fromarray(new_img, mode='RGB')
+
+        self.resized_img = resize_image(new_img, label_size)
+        resized = False
+
+        self.resized_img = ImageQt.ImageQt(self.resized_img)
+        reference_img = QtGui.QPixmap.fromImage(self.resized_img)
+        self.label_original_image.setPixmap(reference_img)
+
 
 
 
