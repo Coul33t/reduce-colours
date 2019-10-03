@@ -2,6 +2,8 @@
 
 This algorithm allows you to reduce the number of colours inside an original image to a desired number of colours (*n*).
 
+GUI usage : `py ui/main_gui.py`
+
 ### Libraries used:
   * Skimage (Scikit image)
   * OpenCV (unusued right now)
