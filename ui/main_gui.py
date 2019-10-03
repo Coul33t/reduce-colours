@@ -164,6 +164,9 @@ class Ui_MainWindow(object):
         string = QtWidgets.QFileDialog.getOpenFileName(filter="Image Files (*.png *.jpg *.bmp)")
         self.path_to_img = string[0]
 
+        if not self.path_to_img:
+            return
+
         self.label_import_name.setText(self.path_to_img.split('/')[-1])
 
         self.initial_img = Image.open(self.path_to_img).convert('RGB')
