@@ -23,6 +23,7 @@ def resize_image(img, max_size):
 
     if resized:
         return img.resize(size)
+
     return img
 
 def get_number_of_colours(img):

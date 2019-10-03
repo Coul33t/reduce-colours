@@ -32,9 +32,10 @@ class Ui_MainWindow(object):
         self.resized_initial_img = None
         self.new_img = None
         self.resized_new_img = None
-        self.colours_to_display = None
+        self.colours_to_display = []
         self.final_colour_number = 0
         self.model_listView_choosen_colours = None
+        self.model_listView_mouse_colour = None
 
 
     def setupUi(self, MainWindow):
@@ -63,7 +64,7 @@ class Ui_MainWindow(object):
         self.pushButton_n_colours.setGeometry(QtCore.QRect(600, 30, 51, 28))
         self.pushButton_n_colours.setObjectName("pushButton_n_colours")
         self.line = QtWidgets.QFrame(self.centralwidget)
-        self.line.setGeometry(QtCore.QRect(370, 20, 20, 451))
+        self.line.setGeometry(QtCore.QRect(370, 20, 20, 511))
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
@@ -74,7 +75,7 @@ class Ui_MainWindow(object):
         self.label_2_choosen_colours.setGeometry(QtCore.QRect(390, 70, 101, 16))
         self.label_2_choosen_colours.setObjectName("label_2_choosen_colours")
         self.pushButton_go = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_go.setGeometry(QtCore.QRect(340, 480, 93, 28))
+        self.pushButton_go.setGeometry(QtCore.QRect(540, 520, 93, 28))
         self.pushButton_go.setObjectName("pushButton_go")
         self.pushButton_reset = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_reset.setGeometry(QtCore.QRect(10, 480, 93, 28))
@@ -87,8 +88,26 @@ class Ui_MainWindow(object):
         self.label_image_generation.setText("")
         self.label_image_generation.setObjectName("label_image_generation")
         self.pushButton_save = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_save.setGeometry(QtCore.QRect(340, 510, 93, 28))
+        self.pushButton_save.setGeometry(QtCore.QRect(640, 520, 93, 28))
         self.pushButton_save.setObjectName("pushButton_save")
+        self.pushButton_delete_colour = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_delete_colour.setGeometry(QtCore.QRect(640, 460, 93, 28))
+        self.pushButton_delete_colour.setObjectName("pushButton_delete_colour")
+        self.pushButton_change_colour = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_change_colour.setGeometry(QtCore.QRect(540, 460, 93, 28))
+        self.pushButton_change_colour.setObjectName("pushButton_change_colour")
+        self.pushButton_add_colour = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_add_colour.setGeometry(QtCore.QRect(440, 460, 93, 28))
+        self.pushButton_add_colour.setObjectName("pushButton_add_colour")
+        self.pushButton_add_mouse_colour = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_add_mouse_colour.setGeometry(QtCore.QRect(300, 480, 61, 28))
+        self.pushButton_add_mouse_colour.setObjectName("pushButton_add_mouse_colour")
+        self.pushButton_change_mouse_colour = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_change_mouse_colour.setGeometry(QtCore.QRect(300, 510, 61, 28))
+        self.pushButton_change_mouse_colour.setObjectName("pushButton_change_mouse_colour")
+        self.listView_mouse_colour = QtWidgets.QListView(self.centralwidget)
+        self.listView_mouse_colour.setGeometry(QtCore.QRect(220, 480, 71, 21))
+        self.listView_mouse_colour.setObjectName("listView")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 739, 26))
@@ -115,9 +134,18 @@ class Ui_MainWindow(object):
         self.pushButton_reset.setText(_translate("MainWindow", "Reset"))
         self.label_total_number_of_colour.setText(_translate("MainWindow", "Total Number of colours:"))
         self.pushButton_save.setText(_translate("MainWindow", "Save"))
+        self.pushButton_delete_colour.setText(_translate("MainWindow", "Delete"))
+        self.pushButton_change_colour.setText(_translate("MainWindow", "Change colour"))
+        self.pushButton_add_colour.setText(_translate("MainWindow", "Add colour"))
+        self.pushButton_add_mouse_colour.setText(_translate("MainWindow", "Add"))
+        self.pushButton_change_mouse_colour.setText(_translate("MainWindow", "Change"))
 
     def initialise(self):
         self.model_listView_choosen_colours = QtGui.QStandardItemModel(self.listView_choosen_colours)
+        self.listView_choosen_colours.setModel(self.model_listView_choosen_colours)
+        self.model_listView_mouse_colour = QtGui.QStandardItemModel(self.listView_mouse_colour)
+        self.listView_mouse_colour.setModel(self.model_listView_mouse_colour)
+
 
     def link_components(self):
         self.pushButton_import.clicked.connect(self.select_file)
@@ -125,6 +153,12 @@ class Ui_MainWindow(object):
         self.pushButton_go.clicked.connect(self.generate_output)
         self.pushButton_reset.clicked.connect(self.reset_displayed_image)
         self.pushButton_save.clicked.connect(self.save_output_image)
+        self.pushButton_add_colour.clicked.connect(self.add_colour)
+        self.pushButton_delete_colour.clicked.connect(self.delete_colour)
+        self.pushButton_change_colour.clicked.connect(self.change_colour)
+        self.label_original_image.mousePressEvent = self.get_colour_under_mouse
+        self.pushButton_add_mouse_colour.clicked.connect(self.add_mouse_colour)
+        self.pushButton_change_mouse_colour.clicked.connect(self.change_mouse_colour)
 
     def select_file(self):
         string = QtWidgets.QFileDialog.getOpenFileName(filter="Image Files (*.png *.jpg *.bmp)")
@@ -164,11 +198,71 @@ class Ui_MainWindow(object):
             # Add the item to the model
             self.model_listView_choosen_colours.appendRow(item)
 
-        # Apply the model to the list view
-        self.listView_choosen_colours.setModel(self.model_listView_choosen_colours)
+    def add_colour(self):
+        new_colour = QtWidgets.QColorDialog.getColor().name()
+        if not new_colour:
+            return
+
+        item = QtGui.QStandardItem()
+        item.setBackground(QtGui.QColor(new_colour))
+        self.model_listView_choosen_colours.appendRow(item)
+
+    def add_mouse_colour(self):
+        new_colour = self.model_listView_mouse_colour.item(0).background().color()
+
+        item = QtGui.QStandardItem()
+        item.setBackground(new_colour)
+        self.model_listView_choosen_colours.appendRow(item)
+
+    def change_mouse_colour(self):
+        new_colour = self.model_listView_mouse_colour.item(0).background().color()
+
+        index = self.listView_choosen_colours.selectedIndexes()
+        if len(index) < 1:
+            return
+
+        self.model_listView_choosen_colours.itemFromIndex(index[0]).setBackground(new_colour)
+
+    def change_colour(self):
+        new_colour = QtWidgets.QColorDialog.getColor()
+
+        index = self.listView_choosen_colours.selectedIndexes()
+        if len(index) < 1:
+            return
+
+        self.model_listView_choosen_colours.itemFromIndex(index[0]).setBackground(QtGui.QColor(new_colour))
+
+
+    def delete_colour(self):
+        index = self.listView_choosen_colours.selectedIndexes()
+        if len(index) > 0:
+            self.model_listView_choosen_colours.removeRow(index[0].row())
+
+    def get_colour_under_mouse(self, event):
+        if self.resized_initial_img is None:
+            return
+
+        # TODO: pixel offset sometimes (probably has something to do with resizing)
+        x = event.localPos().x()
+        y = event.localPos().y()
+
+        colour = self.resized_initial_img.pixel(x,y)
+        rgb = QtGui.QColor(colour).getRgb()[0:3]
+
+
+        item = QtGui.QStandardItem()
+        item.setBackground(QtGui.QColor(rgb[0], rgb[1], rgb[2]))
+        self.model_listView_mouse_colour.removeRow(0)
+        # Add the item to the model
+        self.model_listView_mouse_colour.appendRow(item)
 
     def generate_output(self):
         self.label_image_generation.setText('Generating image...')
+
+        self.colours_to_display = []
+        for i in range(self.model_listView_choosen_colours.rowCount()):
+            item = self.model_listView_choosen_colours.item(i)
+            self.colours_to_display.append(np.asarray(item.background().color().getRgb()[0:3], np.float64) / 255)
 
         self.new_img = merge_colours(self.initial_img, self.colours_to_display)
         size = list(np.asarray(self.new_img).shape[:2])
