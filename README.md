@@ -11,9 +11,9 @@ This algorithm allows you to reduce the number of colours inside an original ima
 
 ### DONE:
  * GUI
+ * Colour picker
  
 ### TODO: 
- * Colour picker in the generated list
  * Args parser (input image and *n*)
  * Allow to specify regions to exclude for the colour reduction
  * Continue developping the other method
