@@ -25,15 +25,15 @@ def resize_image(img, max_size):
         return img.resize(size)
     return img
 
+def get_number_of_colours(img):
+    return len(img.getcolors())
+
 def get_colours(img, final_colour_number):
     # Get all the colours in the image
     all_colours_rgb = img.getcolors()
 
-    print(len(all_colours_rgb))
-    print(final_colour_number)
-
     if final_colour_number > len(all_colours_rgb):
-        return []
+        final_colour_number = len(all_colours_rgb)
 
     # Convert tuples into lists
     all_colours_rgb = [[x[0], np.asarray(x[1]) / 255] for x in all_colours_rgb]

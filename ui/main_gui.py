@@ -29,7 +29,9 @@ class Ui_MainWindow(object):
     def __init__(self):
         self.path_to_img = None
         self.initial_img = None
-        self.resized_img = None
+        self.resized_initial_img = None
+        self.new_img = None
+        self.resized_new_img = None
         self.colours_to_display = None
         self.final_colour_number = 0
         self.model_listView_choosen_colours = None
@@ -44,7 +46,7 @@ class Ui_MainWindow(object):
         self.pushButton_import.setGeometry(QtCore.QRect(10, 10, 93, 28))
         self.pushButton_import.setObjectName("pushButton_import")
         self.label_import_name = QtWidgets.QLabel(self.centralwidget)
-        self.label_import_name.setGeometry(QtCore.QRect(120, 20, 55, 16))
+        self.label_import_name.setGeometry(QtCore.QRect(120, 15, 241, 21))
         self.label_import_name.setText("")
         self.label_import_name.setObjectName("label_import_name")
         self.label_original_image = QtWidgets.QLabel(self.centralwidget)
@@ -55,7 +57,7 @@ class Ui_MainWindow(object):
         self.spinBox_n_colours.setGeometry(QtCore.QRect(550, 30, 42, 22))
         self.spinBox_n_colours.setObjectName("spinBox_n_colours")
         self.label_n_colours = QtWidgets.QLabel(self.centralwidget)
-        self.label_n_colours.setGeometry(QtCore.QRect(394, 30, 141, 20))
+        self.label_n_colours.setGeometry(QtCore.QRect(390, 30, 141, 20))
         self.label_n_colours.setObjectName("label_n_colours")
         self.pushButton_n_colours = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_n_colours.setGeometry(QtCore.QRect(600, 30, 51, 28))
@@ -74,6 +76,19 @@ class Ui_MainWindow(object):
         self.pushButton_go = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_go.setGeometry(QtCore.QRect(340, 480, 93, 28))
         self.pushButton_go.setObjectName("pushButton_go")
+        self.pushButton_reset = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_reset.setGeometry(QtCore.QRect(10, 480, 93, 28))
+        self.pushButton_reset.setObjectName("pushButton_reset")
+        self.label_total_number_of_colour = QtWidgets.QLabel(self.centralwidget)
+        self.label_total_number_of_colour.setGeometry(QtCore.QRect(390, 10, 191, 16))
+        self.label_total_number_of_colour.setObjectName("label_total_number_of_colour")
+        self.label_image_generation = QtWidgets.QLabel(self.centralwidget)
+        self.label_image_generation.setGeometry(QtCore.QRect(110, 480, 101, 21))
+        self.label_image_generation.setText("")
+        self.label_image_generation.setObjectName("label_image_generation")
+        self.pushButton_save = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_save.setGeometry(QtCore.QRect(340, 510, 93, 28))
+        self.pushButton_save.setObjectName("pushButton_save")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 739, 26))
@@ -97,6 +112,9 @@ class Ui_MainWindow(object):
         self.pushButton_n_colours.setText(_translate("MainWindow", "Ok"))
         self.label_2_choosen_colours.setText(_translate("MainWindow", "Choosen colours:"))
         self.pushButton_go.setText(_translate("MainWindow", "Go!"))
+        self.pushButton_reset.setText(_translate("MainWindow", "Reset"))
+        self.label_total_number_of_colour.setText(_translate("MainWindow", "Total Number of colours:"))
+        self.pushButton_save.setText(_translate("MainWindow", "Save"))
 
     def initialise(self):
         self.model_listView_choosen_colours = QtGui.QStandardItemModel(self.listView_choosen_colours)
@@ -105,24 +123,29 @@ class Ui_MainWindow(object):
         self.pushButton_import.clicked.connect(self.select_file)
         self.pushButton_n_colours.clicked.connect(self.get_colours)
         self.pushButton_go.clicked.connect(self.generate_output)
+        self.pushButton_reset.clicked.connect(self.reset_displayed_image)
+        self.pushButton_save.clicked.connect(self.save_output_image)
 
     def select_file(self):
         string = QtWidgets.QFileDialog.getOpenFileName(filter="Image Files (*.png *.jpg *.bmp)")
         self.path_to_img = string[0]
 
-        self.label_import_name.setText(string[0].split('/')[-1])
+        self.label_import_name.setText(self.path_to_img.split('/')[-1])
 
         self.initial_img = Image.open(self.path_to_img).convert('RGB')
 
         size = list(np.asarray(self.initial_img).shape[:2])
         label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())
 
-        self.resized_img = resize_image(self.initial_img, label_size)
+        self.resized_initial_img = resize_image(self.initial_img, label_size)
         resized = False
 
-        self.resized_img = ImageQt.ImageQt(self.resized_img)
-        reference_img = QtGui.QPixmap.fromImage(self.resized_img)
+        self.resized_initial_img = ImageQt.ImageQt(self.resized_initial_img)
+        reference_img = QtGui.QPixmap.fromImage(self.resized_initial_img)
         self.label_original_image.setPixmap(reference_img)
+
+        self.label_image_generation.setText('')
+        self.label_total_number_of_colour.setText(f"Total number of colours: {get_number_of_colours(self.initial_img)}")
 
     def get_colours(self):
         self.model_listView_choosen_colours.clear()
@@ -145,22 +168,35 @@ class Ui_MainWindow(object):
         self.listView_choosen_colours.setModel(self.model_listView_choosen_colours)
 
     def generate_output(self):
-        new_img = merge_colours(self.initial_img, self.colours_to_display)
-        size = list(np.asarray(new_img).shape[:2])
+        self.label_image_generation.setText('Generating image...')
+
+        self.new_img = merge_colours(self.initial_img, self.colours_to_display)
+        size = list(np.asarray(self.new_img).shape[:2])
         label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())
 
-        new_img = np.asarray(new_img * 255, 'uint8')
-        new_img = Image.fromarray(new_img, mode='RGB')
+        self.new_img = np.asarray(self.new_img * 255, 'uint8')
+        self.new_img = Image.fromarray(self.new_img, mode='RGB')
 
-        self.resized_img = resize_image(new_img, label_size)
+        self.new_resized_img = resize_image(self.new_img, label_size)
         resized = False
 
-        self.resized_img = ImageQt.ImageQt(self.resized_img)
-        reference_img = QtGui.QPixmap.fromImage(self.resized_img)
+        self.new_resized_img = ImageQt.ImageQt(self.new_resized_img)
+        reference_img = QtGui.QPixmap.fromImage(self.new_resized_img)
         self.label_original_image.setPixmap(reference_img)
 
+        self.label_image_generation.setText('Image generated!')
 
+    def reset_displayed_image(self):
+        reference_img = QtGui.QPixmap.fromImage(self.resized_initial_img)
+        self.label_original_image.setPixmap(reference_img)
 
+    def save_output_image(self):
+        final_name = f"{self.path_to_img.split('.')[0]}_reduced.{self.path_to_img.split('.')[-1]}"
+        self.new_img.save(final_name)
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setText(f"Image successfully saved as {final_name} !")
+        msg.exec_()
 
 if __name__ == "__main__":
     import sys
