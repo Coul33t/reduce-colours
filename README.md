@@ -18,5 +18,6 @@ GUI usage : `py ui/main_gui.py`
 ### TODO: 
  * Args parser (input image and *n*)
  * Allow to specify regions to exclude for the colour reduction
+ * Allow to specify direct colour replacement
  * Continue developping the other method
  * Initial and final colours display in terminal with libtcod
