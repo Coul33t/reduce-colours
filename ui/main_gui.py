@@ -146,6 +146,42 @@ class Ui_MainWindow(object):
         self.model_listView_mouse_colour = QtGui.QStandardItemModel(self.listView_mouse_colour)
         self.listView_mouse_colour.setModel(self.model_listView_mouse_colour)
 
+        self.hide_all()
+
+    def hide_all(self):
+        self.label_n_colours.hide()
+        self.pushButton_n_colours.hide()
+        self.label_2_choosen_colours.hide()
+        self.pushButton_go.hide()
+        self.pushButton_reset.hide()
+        self.label_total_number_of_colour.hide()
+        self.pushButton_save.hide()
+        self.pushButton_delete_colour.hide()
+        self.pushButton_change_colour.hide()
+        self.pushButton_add_colour.hide()
+        self.pushButton_add_mouse_colour.hide()
+        self.pushButton_change_mouse_colour.hide()
+        self.listView_choosen_colours.hide()
+        self.listView_mouse_colour.hide()
+        self.spinBox_n_colours.hide()
+
+    def show_all(self):
+        self.label_n_colours.show()
+        self.pushButton_n_colours.show()
+        self.label_2_choosen_colours.show()
+        self.pushButton_go.show()
+        self.pushButton_reset.show()
+        self.label_total_number_of_colour.show()
+        self.pushButton_save.show()
+        self.pushButton_delete_colour.show()
+        self.pushButton_change_colour.show()
+        self.pushButton_add_colour.show()
+        self.pushButton_add_mouse_colour.show()
+        self.pushButton_change_mouse_colour.show()
+        self.listView_choosen_colours.show()
+        self.listView_mouse_colour.show()
+        self.spinBox_n_colours.show()
+
 
     def link_components(self):
         self.pushButton_import.clicked.connect(self.select_file)
@@ -184,6 +220,14 @@ class Ui_MainWindow(object):
         self.label_image_generation.setText('')
         self.label_total_number_of_colour.setText(f"Total number of colours: {get_number_of_colours(self.initial_img)}")
 
+        self.show_all()
+
+    def check_if_colour_exists(self, colour):
+        for index in range(self.model_listView_choosen_colours.rowCount()):
+            if colour == self.model_listView_choosen_colours.item(index).background().color():
+                return True
+        return False
+
     def get_colours(self):
         self.model_listView_choosen_colours.clear()
         self.final_colour_number = self.spinBox_n_colours.value()
@@ -201,9 +245,20 @@ class Ui_MainWindow(object):
             # Add the item to the model
             self.model_listView_choosen_colours.appendRow(item)
 
+    def colour_already_in_list(self, colour):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setText(f"Colour {colour.getRgb()[:-1]} already in the list.")
+        msg.exec_()
+
     def add_colour(self):
         new_colour = QtWidgets.QColorDialog.getColor().name()
+
         if not new_colour:
+            return
+
+        if self.check_if_colour_exists(new_colour):
+            self.colour_already_in_list(new_colour)
             return
 
         item = QtGui.QStandardItem()
@@ -211,7 +266,14 @@ class Ui_MainWindow(object):
         self.model_listView_choosen_colours.appendRow(item)
 
     def add_mouse_colour(self):
+        if self.model_listView_mouse_colour.item(0) is None:
+            return
+
         new_colour = self.model_listView_mouse_colour.item(0).background().color()
+
+        if self.check_if_colour_exists(new_colour):
+            self.colour_already_in_list(new_colour)
+            return
 
         item = QtGui.QStandardItem()
         item.setBackground(new_colour)
@@ -219,6 +281,10 @@ class Ui_MainWindow(object):
 
     def change_mouse_colour(self):
         new_colour = self.model_listView_mouse_colour.item(0).background().color()
+
+        if self.check_if_colour_exists(new_colour):
+            self.colour_already_in_list(new_colour)
+            return
 
         index = self.listView_choosen_colours.selectedIndexes()
         if len(index) < 1:
@@ -228,6 +294,10 @@ class Ui_MainWindow(object):
 
     def change_colour(self):
         new_colour = QtWidgets.QColorDialog.getColor()
+
+        if self.check_if_colour_exists(new_colour):
+            self.colour_already_in_list(new_colour)
+            return
 
         index = self.listView_choosen_colours.selectedIndexes()
         if len(index) < 1:
