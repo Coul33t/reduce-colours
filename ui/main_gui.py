@@ -108,6 +108,12 @@ class Ui_MainWindow(object):
         self.listView_mouse_colour = QtWidgets.QListView(self.centralwidget)
         self.listView_mouse_colour.setGeometry(QtCore.QRect(220, 480, 71, 21))
         self.listView_mouse_colour.setObjectName("listView")
+        self.pushButton_merge_colours = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_merge_colours.setGeometry(QtCore.QRect(440, 490, 93, 28))
+        self.pushButton_merge_colours.setObjectName("pushButton_merge_colours")
+        self.spinBox_merge_colours = QtWidgets.QSpinBox(self.centralwidget)
+        self.spinBox_merge_colours.setGeometry(QtCore.QRect(390, 490, 42, 22))
+        self.spinBox_merge_colours.setObjectName("spinBox_merge_colours")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 739, 26))
@@ -139,6 +145,7 @@ class Ui_MainWindow(object):
         self.pushButton_add_colour.setText(_translate("MainWindow", "Add colour"))
         self.pushButton_add_mouse_colour.setText(_translate("MainWindow", "Add"))
         self.pushButton_change_mouse_colour.setText(_translate("MainWindow", "Change"))
+        self.pushButton_merge_colours.setText(_translate("MainWindow", "Merge"))
 
     def initialise(self):
         self.model_listView_choosen_colours = QtGui.QStandardItemModel(self.listView_choosen_colours)
@@ -164,6 +171,8 @@ class Ui_MainWindow(object):
         self.listView_choosen_colours.hide()
         self.listView_mouse_colour.hide()
         self.spinBox_n_colours.hide()
+        self.spinBox_merge_colours.hide()
+        self.pushButton_merge_colours.hide()
 
     def show_all(self):
         self.label_n_colours.show()
@@ -181,6 +190,8 @@ class Ui_MainWindow(object):
         self.listView_choosen_colours.show()
         self.listView_mouse_colour.show()
         self.spinBox_n_colours.show()
+        self.spinBox_merge_colours.show()
+        self.pushButton_merge_colours.show()
 
 
     def link_components(self):
@@ -195,6 +206,7 @@ class Ui_MainWindow(object):
         self.label_original_image.mousePressEvent = self.get_colour_under_mouse
         self.pushButton_add_mouse_colour.clicked.connect(self.add_mouse_colour)
         self.pushButton_change_mouse_colour.clicked.connect(self.change_mouse_colour)
+        self.pushButton_merge_colours.clicked.connect(self.merge_colours)
 
     def select_file(self):
         string = QtWidgets.QFileDialog.getOpenFileName(filter="Image Files (*.png *.jpg *.bmp)")
@@ -328,6 +340,35 @@ class Ui_MainWindow(object):
         self.model_listView_mouse_colour.removeRow(0)
         # Add the item to the model
         self.model_listView_mouse_colour.appendRow(item)
+
+    def get_similarity_matrix(self):
+        similarity_matrix = np.zeros((self.model_listView_choosen_colours.rowCount(), self.model_listView_choosen_colours.rowCount()))- 1
+
+        for i in range(self.model_listView_choosen_colours.rowCount()):
+            for j in range(self.model_listView_choosen_colours.rowCount()):
+                if i != j:
+                    c1 = np.asarray(self.model_listView_choosen_colours.item(i).background().color().getRgb()[:-1]) / 255
+                    c2 = np.asarray(self.model_listView_choosen_colours.item(j).background().color().getRgb()[:-1]) / 255
+                    similarity_matrix[i, j] = dst(color.rgb2lab([[c1]])[0][0], color.rgb2lab([[c2]])[0][0])
+
+        return similarity_matrix
+
+    def merge_colours(self):
+        similarity_matrix = self.get_similarity_matrix()
+        threshold = self.spinBox_merge_colours.value()
+
+        print(similarity_matrix)
+        print(np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold)))
+        print(next(zip(np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold)))))
+        # Good
+
+        while not np.all((similarity_matrix > 0)&(similarity_matrix < threshold)):
+            to_merge = next(zip(np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))))
+            self.model_listView_choosen_colours.item(to_merge[0]).background().color()
+            self.model_listView_choosen_colours.item(to_merge[1]).background().color()
+            similarity_matrix = self.get_similarity_matrix()
+
+
 
     def generate_output(self):
         self.label_image_generation.setText('Generating image...')
