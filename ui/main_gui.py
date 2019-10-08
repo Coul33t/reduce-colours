@@ -357,16 +357,31 @@ class Ui_MainWindow(object):
         similarity_matrix = self.get_similarity_matrix()
         threshold = self.spinBox_merge_colours.value()
 
-        print(similarity_matrix)
-        print(np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold)))
-        print(next(zip(np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold)))))
-        # Good
+        all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
 
-        while not np.all((similarity_matrix > 0)&(similarity_matrix < threshold)):
-            to_merge = next(zip(np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))))
-            self.model_listView_choosen_colours.item(to_merge[0]).background().color()
-            self.model_listView_choosen_colours.item(to_merge[1]).background().color()
+        while len(all_to_merge[0]) > 0:
+            #◙ Get the first one to merge
+            to_merge = (all_to_merge[0][0], all_to_merge[1][0])
+
+            # Get colour as RGB values in range [0;1]
+            c1 = np.asarray(self.model_listView_choosen_colours.item(to_merge[0]).background().color().getRgb()[:-1]) / 255
+            c2 = np.asarray(self.model_listView_choosen_colours.item(to_merge[1]).background().color().getRgb()[:-1]) / 255
+
+            # Get colour as LAB
+            c1 = color.rgb2lab([[c1]])[0][0]
+            c2 = color.rgb2lab([[c2]])[0][0]
+
+            # Is this a godd way to merge colours?
+            new_colour_lab = (c1 + c2) / 2.0
+
+            nc = color.lab2rgb([[new_colour_lab]])[0][0] * 255
+            nc = QtGui.QColor(int(nc[0]) , int(nc[1]), int(nc[2]))
+
+            self.model_listView_choosen_colours.item(to_merge[0]).setBackground(QtGui.QColor(nc))
+            self.model_listView_choosen_colours.removeRow(to_merge[1])
+
             similarity_matrix = self.get_similarity_matrix()
+            all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
 
 
 
