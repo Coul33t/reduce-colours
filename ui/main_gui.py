@@ -14,17 +14,6 @@ import numpy as np
 
 from ui_funcs import *
 
-def debug_trace():
-  '''Set a tracepoint in the Python debugger that works with Qt'''
-  from PyQt5.QtCore import pyqtRemoveInputHook
-
-  # Or for Qt5
-  #from PyQt5.QtCore import pyqtRemoveInputHook
-
-  from pdb import set_trace
-  pyqtRemoveInputHook()
-  set_trace()
-
 class Ui_MainWindow(object):
     def __init__(self):
         self.path_to_img = None
@@ -331,7 +320,7 @@ class Ui_MainWindow(object):
         x = event.localPos().x()
         y = event.localPos().y()
 
-        colour = self.resized_initial_img.pixel(x,y)
+        colour = self.resized_initial_img.pixel(x, y)
         rgb = QtGui.QColor(colour).getRgb()[0:3]
 
 
@@ -341,47 +330,9 @@ class Ui_MainWindow(object):
         # Add the item to the model
         self.model_listView_mouse_colour.appendRow(item)
 
-    def get_similarity_matrix(self):
-        similarity_matrix = np.zeros((self.model_listView_choosen_colours.rowCount(), self.model_listView_choosen_colours.rowCount()))- 1
-
-        for i in range(self.model_listView_choosen_colours.rowCount()):
-            for j in range(self.model_listView_choosen_colours.rowCount()):
-                if i != j:
-                    c1 = np.asarray(self.model_listView_choosen_colours.item(i).background().color().getRgb()[:-1]) / 255
-                    c2 = np.asarray(self.model_listView_choosen_colours.item(j).background().color().getRgb()[:-1]) / 255
-                    similarity_matrix[i, j] = dst(color.rgb2lab([[c1]])[0][0], color.rgb2lab([[c2]])[0][0])
-
-        return similarity_matrix
-
     def merge_colours(self):
-        similarity_matrix = self.get_similarity_matrix()
-        threshold = self.spinBox_merge_colours.value()
-
-        all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
-
-        while len(all_to_merge[0]) > 0:
-            #◙ Get the first one to merge
-            to_merge = (all_to_merge[0][0], all_to_merge[1][0])
-
-            # Get colour as RGB values in range [0;1]
-            c1 = np.asarray(self.model_listView_choosen_colours.item(to_merge[0]).background().color().getRgb()[:-1]) / 255
-            c2 = np.asarray(self.model_listView_choosen_colours.item(to_merge[1]).background().color().getRgb()[:-1]) / 255
-
-            # Get colour as LAB
-            c1 = color.rgb2lab([[c1]])[0][0]
-            c2 = color.rgb2lab([[c2]])[0][0]
-
-            # Is this a godd way to merge colours?
-            new_colour_lab = (c1 + c2) / 2.0
-
-            nc = color.lab2rgb([[new_colour_lab]])[0][0] * 255
-            nc = QtGui.QColor(int(nc[0]) , int(nc[1]), int(nc[2]))
-
-            self.model_listView_choosen_colours.item(to_merge[0]).setBackground(QtGui.QColor(nc))
-            self.model_listView_choosen_colours.removeRow(to_merge[1])
-
-            similarity_matrix = self.get_similarity_matrix()
-            all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
+        merge_colours(self.model_listView_choosen_colours,
+                      self.spinBox_merge_colours.value())
 
 
 
@@ -393,7 +344,7 @@ class Ui_MainWindow(object):
             item = self.model_listView_choosen_colours.item(i)
             self.colours_to_display.append(np.asarray(item.background().color().getRgb()[0:3], np.float64) / 255)
 
-        self.new_img = merge_colours(self.initial_img, self.colours_to_display)
+        self.new_img = reduce_colours(self.initial_img, self.colours_to_display)
 
         size = list(np.asarray(self.new_img).shape[:2])
         label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())

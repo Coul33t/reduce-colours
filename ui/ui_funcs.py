@@ -4,6 +4,7 @@ import numpy as np
 from math import floor, sqrt
 from progress_bar import ProgressBar
 from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtGui
 
 def resize_image(img, max_size):
     size = list(np.asarray(img).shape[:2])
@@ -50,7 +51,7 @@ def get_colours(img, final_colour_number):
 
     return final_colours
 
-def merge_colours(img_rgb, final_colours):
+def reduce_colours(img_rgb, final_colours):
 
     if not isinstance(img_rgb, np.ndarray):
         img_rgb = np.asarray(img_rgb) / 255
@@ -79,3 +80,46 @@ def merge_colours(img_rgb, final_colours):
 
 def dst(c1, c2):
     return sqrt(pow(c2[0] - c1[0], 2) + pow(c2[1] - c1[1], 2) + pow(c2[2] - c1[2], 2))
+
+def get_similarity_matrix(listView_colours):
+    list_size = listView_colours.rowCount()
+    similarity_matrix = np.zeros((list_size, list_size))- 1
+
+    for i in range(list_size):
+        for j in range(list_size):
+            if i != j:
+                c1 = np.asarray(listView_colours.item(i).background().color().getRgb()[:-1]) / 255
+                c2 = np.asarray(listView_colours.item(j).background().color().getRgb()[:-1]) / 255
+                similarity_matrix[i, j] = dst(color.rgb2lab([[c1]])[0][0], color.rgb2lab([[c2]])[0][0])
+
+    return similarity_matrix
+
+def merge_colours(listView_colours, threshold):
+    #TODO: move to ui_funcs
+    similarity_matrix = get_similarity_matrix(listView_colours)
+
+    all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
+
+    while len(all_to_merge[0]) > 0:
+        #◙ Get the first one to merge
+        to_merge = (all_to_merge[0][0], all_to_merge[1][0])
+
+        # Get colour as RGB values in range [0;1]
+        c1 = np.asarray(listView_colours.item(to_merge[0]).background().color().getRgb()[:-1]) / 255
+        c2 = np.asarray(listView_colours.item(to_merge[1]).background().color().getRgb()[:-1]) / 255
+
+        # Get colour as LAB
+        c1 = color.rgb2lab([[c1]])[0][0]
+        c2 = color.rgb2lab([[c2]])[0][0]
+
+        # Is this a godd way to merge colours?
+        new_colour_lab = (c1 + c2) / 2.0
+
+        nc = color.lab2rgb([[new_colour_lab]])[0][0] * 255
+        nc = QtGui.QColor(int(nc[0]) , int(nc[1]), int(nc[2]))
+
+        listView_colours.item(to_merge[0]).setBackground(QtGui.QColor(nc))
+        listView_colours.removeRow(to_merge[1])
+
+        similarity_matrix = get_similarity_matrix(listView_colours)
+        all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
