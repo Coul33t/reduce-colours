@@ -1,4 +1,3 @@
-import PIL
 from skimage import color
 import numpy as np
 from math import floor, sqrt
@@ -14,13 +13,13 @@ def resize_image(img, max_size):
 
     #TODO: sure about this?
     if size[0] > max_size[0] or size[1] > max_size[1]:
-        ratio = min(max_size[1]/size[1], max_size[0]/size[0])
+        ratio = min(max_size[1] / size[1], max_size[0] / size[0])
         size[0] = floor(size[0] * ratio)
         size[1] = floor(size[1] * ratio)
         resized = True
 
     elif size[0] < max_size[0] or size[1] < max_size[1]:
-        ratio = min(max_size[1]/size[1], max_size[0]/size[0])
+        ratio = min(max_size[1] / size[1], max_size[0] / size[0])
         size[0] = floor(size[0] * ratio)
         size[1] = floor(size[1] * ratio)
         resized = True
@@ -45,7 +44,7 @@ def get_colours(img, final_colour_number):
 
     final_colours = []
 
-    for i in range(final_colour_number):
+    for _ in range(final_colour_number):
         idx = [x[0] for x in all_colours_rgb].index(max([x[0] for x in all_colours_rgb]))
         final_colours.append(all_colours_rgb[idx][1])
         all_colours_rgb[idx][0] = -1
@@ -59,7 +58,7 @@ def reduce_colours(img_rgb, final_colours):
 
     final_img = img_rgb.copy()
 
-    #TODO: check if the RGB2LAB conversion MUST occurs at the very last
+    # TODO: check if the RGB2LAB conversion MUST occurs at the very last
     # or if the problems I had were because of code problem uh
 
     pb = ProgressBar('Reducing colours')
@@ -70,10 +69,9 @@ def reduce_colours(img_rgb, final_colours):
             c2 = [color.rgb2lab([[x]])[0][0] for x in final_colours]
             distances = [dst(c1, x) for x in c2]
             final_img[i, j] = final_colours[distances.index(min(distances))]
-            pb.setValue(floor((((i * final_img.shape[1]) + j) / (final_img.shape[0] * final_img.shape[1])) * 100))
+
+            pb.set_value(floor((((i * final_img.shape[1]) + j) / (final_img.shape[0] * final_img.shape[1])) * 100))
             QApplication.processEvents()
-            #print(((i * j) + j) / (final_img.shape[0] * final_img.shape[1]))
-            #print(floor((((i * final_img.shape[1]) + j) / (final_img.shape[0] * final_img.shape[1])) * 100))
 
     pb.close()
 
@@ -84,7 +82,7 @@ def dst(c1, c2):
 
 def get_similarity_matrix(listView_colours):
     list_size = listView_colours.rowCount()
-    similarity_matrix = np.zeros((list_size, list_size))- 1
+    similarity_matrix = np.zeros((list_size, list_size)) - 1
 
     for i in range(list_size):
         for j in range(list_size):
@@ -96,7 +94,6 @@ def get_similarity_matrix(listView_colours):
     return similarity_matrix
 
 def merge_colours(listView_colours, threshold):
-    #TODO: move to ui_funcs
     similarity_matrix = get_similarity_matrix(listView_colours)
 
     all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
@@ -105,7 +102,7 @@ def merge_colours(listView_colours, threshold):
     counter = 0
 
     while len(all_to_merge[0]) > 0:
-        #◙ Get the first one to merge
+        # Get the first one to merge
         to_merge = (all_to_merge[0][0], all_to_merge[1][0])
 
         # Get colour as RGB values in range [0;1]
@@ -120,13 +117,13 @@ def merge_colours(listView_colours, threshold):
         new_colour_lab = (c1 + c2) / 2.0
 
         nc = color.lab2rgb([[new_colour_lab]])[0][0] * 255
-        nc = QtGui.QColor(int(nc[0]) , int(nc[1]), int(nc[2]))
+        nc = QtGui.QColor(int(nc[0]), int(nc[1]), int(nc[2]))
 
         listView_colours.item(to_merge[0]).setBackground(QtGui.QColor(nc))
         listView_colours.removeRow(to_merge[1])
 
         counter += 1
-        number_display_window.setValue(counter)
+        number_display_window.set_value(counter)
         QApplication.processEvents()
 
         similarity_matrix = get_similarity_matrix(listView_colours)

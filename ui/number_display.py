@@ -6,7 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -34,11 +34,11 @@ class NumberDisplay(QtWidgets.QDialog, Ui_Dialog):
         self.setupUi(self)
         self.show()
 
-        if name != None:
-            self.setDescription(name)
+        if name is not None:
+            self.set_title(name)
 
-    def setValue(self, val): # Sets value
+    def set_value(self, val):
         self.label_number_value.setText(str(val))
 
-    def setDescription(self, desc): # Sets Pbar window title
+    def set_title(self, desc):
         self.setWindowTitle(desc)

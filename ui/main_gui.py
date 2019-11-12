@@ -12,7 +12,7 @@ from math import floor
 from PIL import Image, ImageQt
 import numpy as np
 
-from ui_funcs import *
+import ui_funcs
 
 class Ui_MainWindow(object):
     def __init__(self):
@@ -208,18 +208,16 @@ class Ui_MainWindow(object):
 
         self.initial_img = Image.open(self.path_to_img).convert('RGB')
 
-        size = list(np.asarray(self.initial_img).shape[:2])
         label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())
 
-        self.resized_initial_img = resize_image(self.initial_img, label_size)
-        resized = False
+        self.resized_initial_img = ui_funcs.resize_image(self.initial_img, label_size)
 
         self.resized_initial_img = ImageQt.ImageQt(self.resized_initial_img)
         reference_img = QtGui.QPixmap.fromImage(self.resized_initial_img)
         self.label_original_image.setPixmap(reference_img)
 
         self.label_image_generation.setText('')
-        self.label_total_number_of_colour.setText(f"Total number of colours: {get_number_of_colours(self.initial_img)}")
+        self.label_total_number_of_colour.setText(f"Total number of colours: {ui_funcs.get_number_of_colours(self.initial_img)}")
 
         self.show_all()
 
@@ -232,7 +230,7 @@ class Ui_MainWindow(object):
     def get_colours(self):
         self.model_listView_choosen_colours.clear()
         self.final_colour_number = self.spinBox_n_colours.value()
-        self.colours_to_display = get_colours(self.initial_img, self.final_colour_number)
+        self.colours_to_display = ui_funcs.get_colours(self.initial_img, self.final_colour_number)
 
         if not self.colours_to_display:
             return
@@ -242,7 +240,7 @@ class Ui_MainWindow(object):
             # create an item with a caption
             item = QtGui.QStandardItem()
 
-            item.setBackground(QtGui.QColor(int(colour[0]* 255) , int(colour[1]* 255), int(colour[2]* 255)))
+            item.setBackground(QtGui.QColor(int(colour[0] * 255), int(colour[1] * 255), int(colour[2] * 255)))
             # Add the item to the model
             self.model_listView_choosen_colours.appendRow(item)
 
@@ -331,8 +329,8 @@ class Ui_MainWindow(object):
         self.model_listView_mouse_colour.appendRow(item)
 
     def merge_colours(self):
-        merge_colours(self.model_listView_choosen_colours,
-                      self.spinBox_merge_colours.value())
+        ui_funcs.merge_colours(self.model_listView_choosen_colours,
+                               self.spinBox_merge_colours.value())
 
 
 
@@ -344,16 +342,14 @@ class Ui_MainWindow(object):
             item = self.model_listView_choosen_colours.item(i)
             self.colours_to_display.append(np.asarray(item.background().color().getRgb()[0:3], np.float64) / 255)
 
-        self.new_img = reduce_colours(self.initial_img, self.colours_to_display)
+        self.new_img = ui_funcs.reduce_colours(self.initial_img, self.colours_to_display)
 
-        size = list(np.asarray(self.new_img).shape[:2])
         label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())
 
         self.new_img = np.asarray(self.new_img * 255, 'uint8')
         self.new_img = Image.fromarray(self.new_img, mode='RGB')
 
-        self.new_resized_img = resize_image(self.new_img, label_size)
-        resized = False
+        self.new_resized_img = ui_funcs.resize_image(self.new_img, label_size)
 
         self.new_resized_img = ImageQt.ImageQt(self.new_resized_img)
         reference_img = QtGui.QPixmap.fromImage(self.new_resized_img)
@@ -372,6 +368,7 @@ class Ui_MainWindow(object):
         msg.setIcon(QtWidgets.QMessageBox.Information)
         msg.setText(f"Image successfully saved as {final_name} !")
         msg.exec_()
+
 
 if __name__ == "__main__":
     import sys
