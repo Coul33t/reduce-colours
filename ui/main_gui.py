@@ -394,6 +394,7 @@ class Ui_MainWindow(object):
             self.colours_to_display.append(np.asarray(item.background().color().getRgb()[0:3], np.float64) / 255)
 
         self.new_img = merge_colours(self.initial_img, self.colours_to_display)
+
         size = list(np.asarray(self.new_img).shape[:2])
         label_size = (self.label_original_image.size().height(), self.label_original_image.size().width())
 

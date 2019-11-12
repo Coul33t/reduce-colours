@@ -2,6 +2,8 @@ import PIL
 from skimage import color
 import numpy as np
 from math import floor, sqrt
+from progress_bar import ProgressBar
+from PyQt5.QtWidgets import QApplication
 
 def resize_image(img, max_size):
     size = list(np.asarray(img).shape[:2])
@@ -27,11 +29,11 @@ def resize_image(img, max_size):
     return img
 
 def get_number_of_colours(img):
-    return len(img.getcolors())
+    return len(img.getcolors(img.size[0] * img.size[1]))
 
 def get_colours(img, final_colour_number):
     # Get all the colours in the image
-    all_colours_rgb = img.getcolors()
+    all_colours_rgb = img.getcolors(img.size[0] * img.size[1])
 
     if final_colour_number > len(all_colours_rgb):
         final_colour_number = len(all_colours_rgb)
@@ -58,12 +60,20 @@ def merge_colours(img_rgb, final_colours):
     #TODO: check if the RGB2LAB conversion MUST occurs at the very last
     # or if the problems I had were because of code problem uh
 
+    pb = ProgressBar('Reducing colours')
+
     for i in range(final_img.shape[0]):
         for j in range(final_img.shape[1]):
             c1 = color.rgb2lab([[final_img[i, j]]])[0][0]
             c2 = [color.rgb2lab([[x]])[0][0] for x in final_colours]
             distances = [dst(c1, x) for x in c2]
             final_img[i, j] = final_colours[distances.index(min(distances))]
+            pb.setValue(floor((((i * final_img.shape[1]) + j) / (final_img.shape[0] * final_img.shape[1])) * 100))
+            QApplication.processEvents()
+            #print(((i * j) + j) / (final_img.shape[0] * final_img.shape[1]))
+            #print(floor((((i * final_img.shape[1]) + j) / (final_img.shape[0] * final_img.shape[1])) * 100))
+
+    pb.close()
 
     return final_img
 
