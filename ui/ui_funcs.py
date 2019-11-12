@@ -3,6 +3,7 @@ from skimage import color
 import numpy as np
 from math import floor, sqrt
 from progress_bar import ProgressBar
+from number_display import NumberDisplay
 from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtGui
 
@@ -100,6 +101,9 @@ def merge_colours(listView_colours, threshold):
 
     all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
 
+    number_display_window = NumberDisplay('Merging colours')
+    counter = 0
+
     while len(all_to_merge[0]) > 0:
         #◙ Get the first one to merge
         to_merge = (all_to_merge[0][0], all_to_merge[1][0])
@@ -121,5 +125,11 @@ def merge_colours(listView_colours, threshold):
         listView_colours.item(to_merge[0]).setBackground(QtGui.QColor(nc))
         listView_colours.removeRow(to_merge[1])
 
+        counter += 1
+        number_display_window.setValue(counter)
+        QApplication.processEvents()
+
         similarity_matrix = get_similarity_matrix(listView_colours)
         all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
+
+    number_display_window.close()
