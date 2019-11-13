@@ -52,6 +52,9 @@
     <property name="text">
      <string/>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
    </widget>
    <widget class="QSpinBox" name="spinBox_n_colours">
     <property name="geometry">

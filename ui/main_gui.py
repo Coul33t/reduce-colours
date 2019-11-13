@@ -42,6 +42,7 @@ class Ui_MainWindow(object):
         self.label_original_image = QtWidgets.QLabel(self.centralwidget)
         self.label_original_image.setGeometry(QtCore.QRect(10, 90, 361, 361))
         self.label_original_image.setText("")
+        self.label_original_image.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.label_original_image.setObjectName("label_original_image")
         self.spinBox_n_colours = QtWidgets.QSpinBox(self.centralwidget)
         self.spinBox_n_colours.setGeometry(QtCore.QRect(550, 30, 42, 22))
