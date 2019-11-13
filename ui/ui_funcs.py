@@ -13,19 +13,21 @@ def resize_image(img, max_size):
 
     #TODO: sure about this?
     if size[0] > max_size[0] or size[1] > max_size[1]:
-        ratio = min(max_size[1] / size[1], max_size[0] / size[0])
-        size[0] = floor(size[0] * ratio)
-        size[1] = floor(size[1] * ratio)
+        ratio = min(floor(max_size[1] / size[1]), floor(max_size[0] / size[0]))
+        new_size = [0, 0]
+        new_size = [0, 0][1] = int(size[0] * ratio)
+        new_size = [0, 0][0] = int(size[1] * ratio)
         resized = True
 
     elif size[0] < max_size[0] or size[1] < max_size[1]:
-        ratio = min(max_size[1] / size[1], max_size[0] / size[0])
-        size[0] = floor(size[0] * ratio)
-        size[1] = floor(size[1] * ratio)
+        ratio = min(floor(max_size[1] / size[1]), floor(max_size[0] / size[0]))
+        new_size = [0, 0]
+        new_size[1] = int(size[0] * ratio)
+        new_size[0] = int(size[1] * ratio)
         resized = True
 
     if resized:
-        return img.resize(size)
+        return img.resize(new_size)
 
     return img
 
