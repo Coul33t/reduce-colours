@@ -291,6 +291,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_pixel_perfect">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>510</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Pixel Perfect</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

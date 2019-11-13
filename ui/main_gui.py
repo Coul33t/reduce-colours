@@ -13,6 +13,7 @@ from PIL import Image, ImageQt
 import numpy as np
 
 import ui_funcs
+from pixel_perfect import PixelPerfect
 
 class Ui_MainWindow(object):
     def __init__(self):
@@ -25,6 +26,7 @@ class Ui_MainWindow(object):
         self.final_colour_number = 0
         self.model_listView_choosen_colours = None
         self.model_listView_mouse_colour = None
+        self.pixel_perfect = None
 
 
     def setupUi(self, MainWindow):
@@ -104,6 +106,9 @@ class Ui_MainWindow(object):
         self.spinBox_merge_colours = QtWidgets.QSpinBox(self.centralwidget)
         self.spinBox_merge_colours.setGeometry(QtCore.QRect(390, 490, 42, 22))
         self.spinBox_merge_colours.setObjectName("spinBox_merge_colours")
+        self.pushButton_pixel_perfect = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_pixel_perfect.setGeometry(QtCore.QRect(10, 510, 93, 28))
+        self.pushButton_pixel_perfect.setObjectName("pushButton_pixel_perfect")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 739, 26))
@@ -136,6 +141,7 @@ class Ui_MainWindow(object):
         self.pushButton_add_mouse_colour.setText(_translate("MainWindow", "Add"))
         self.pushButton_change_mouse_colour.setText(_translate("MainWindow", "Change"))
         self.pushButton_merge_colours.setText(_translate("MainWindow", "Merge"))
+        self.pushButton_pixel_perfect.setText(_translate("MainWindow", "Pixel Perfect"))
 
     def initialise(self):
         self.model_listView_choosen_colours = QtGui.QStandardItemModel(self.listView_choosen_colours)
@@ -163,6 +169,7 @@ class Ui_MainWindow(object):
         self.spinBox_n_colours.hide()
         self.spinBox_merge_colours.hide()
         self.pushButton_merge_colours.hide()
+        self.pushButton_pixel_perfect.hide()
 
     def show_all(self):
         self.label_n_colours.show()
@@ -182,6 +189,7 @@ class Ui_MainWindow(object):
         self.spinBox_n_colours.show()
         self.spinBox_merge_colours.show()
         self.pushButton_merge_colours.show()
+        self.pushButton_pixel_perfect.show()
 
 
     def link_components(self):
@@ -197,6 +205,7 @@ class Ui_MainWindow(object):
         self.pushButton_add_mouse_colour.clicked.connect(self.add_mouse_colour)
         self.pushButton_change_mouse_colour.clicked.connect(self.change_mouse_colour)
         self.pushButton_merge_colours.clicked.connect(self.merge_colours)
+        self.pushButton_pixel_perfect.clicked.connect(self.open_pixel_perfect)
 
     def select_file(self):
         string = QtWidgets.QFileDialog.getOpenFileName(filter="Image Files (*.png *.jpg *.bmp)")
@@ -221,6 +230,9 @@ class Ui_MainWindow(object):
         self.label_total_number_of_colour.setText(f"Total number of colours: {ui_funcs.get_number_of_colours(self.initial_img)}")
 
         self.show_all()
+
+    def open_pixel_perfect(self):
+        self.pixel_perfect = PixelPerfect(self.initial_img)
 
     def check_if_colour_exists(self, colour):
         for index in range(self.model_listView_choosen_colours.rowCount()):
