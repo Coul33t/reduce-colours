@@ -13,6 +13,7 @@ from skimage import color
 import numpy as np
 from PIL import Image, ImageQt
 from ui_funcs import resize_image
+from cv2 import cvtColor, COLOR_RGB2Lab, COLOR_Lab2RGB
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -23,31 +24,46 @@ class Ui_Dialog(object):
         self.label_img.setText("")
         self.label_img.setObjectName("label_img")
         self.pushButton_go = QtWidgets.QPushButton(Dialog)
-        self.pushButton_go.setGeometry(QtCore.QRect(370, 100, 93, 28))
+        self.pushButton_go.setGeometry(QtCore.QRect(380, 220, 81, 28))
         self.pushButton_go.setObjectName("pushButton_go")
         self.pushButton_validate = QtWidgets.QPushButton(Dialog)
-        self.pushButton_validate.setGeometry(QtCore.QRect(470, 100, 93, 28))
+        self.pushButton_validate.setGeometry(QtCore.QRect(380, 280, 81, 28))
         self.pushButton_validate.setObjectName("pushButton_validate")
         self.pushButton_cancel = QtWidgets.QPushButton(Dialog)
-        self.pushButton_cancel.setGeometry(QtCore.QRect(470, 130, 93, 28))
+        self.pushButton_cancel.setGeometry(QtCore.QRect(480, 280, 81, 28))
         self.pushButton_cancel.setObjectName("pushButton_cancel")
-        self.label_pixel_size = QtWidgets.QLabel(Dialog)
-        self.label_pixel_size.setGeometry(QtCore.QRect(370, 10, 55, 16))
+        self.pushButton_reset = QtWidgets.QPushButton(Dialog)
+        self.pushButton_reset.setGeometry(QtCore.QRect(482, 220, 81, 28))
+        self.pushButton_reset.setObjectName("pushButton_reset")
+        self.groupBox_pixelisation_type = QtWidgets.QGroupBox(Dialog)
+        self.groupBox_pixelisation_type.setGeometry(QtCore.QRect(380, 130, 181, 80))
+        self.groupBox_pixelisation_type.setObjectName("groupBox_pixelisation_type")
+        self.radioButton_common_colour = QtWidgets.QRadioButton(self.groupBox_pixelisation_type)
+        self.radioButton_common_colour.setGeometry(QtCore.QRect(10, 20, 151, 20))
+        self.radioButton_common_colour.setObjectName("radioButton_common_colour")
+        self.radioButton_colours_average = QtWidgets.QRadioButton(self.groupBox_pixelisation_type)
+        self.radioButton_colours_average.setGeometry(QtCore.QRect(10, 50, 141, 20))
+        self.radioButton_colours_average.setObjectName("radioButton_colours_average")
+        self.groupBox_pixels = QtWidgets.QGroupBox(Dialog)
+        self.groupBox_pixels.setGeometry(QtCore.QRect(380, 10, 181, 111))
+        self.groupBox_pixels.setObjectName("groupBox_pixels")
+        self.label_pixel_size = QtWidgets.QLabel(self.groupBox_pixels)
+        self.label_pixel_size.setGeometry(QtCore.QRect(10, 20, 55, 16))
         self.label_pixel_size.setObjectName("label_pixel_size")
-        self.spinBox_pixel_size = QtWidgets.QSpinBox(Dialog)
-        self.spinBox_pixel_size.setGeometry(QtCore.QRect(500, 10, 61, 22))
+        self.spinBox_pixel_size = QtWidgets.QSpinBox(self.groupBox_pixels)
+        self.spinBox_pixel_size.setGeometry(QtCore.QRect(110, 20, 61, 22))
         self.spinBox_pixel_size.setMinimum(1)
         self.spinBox_pixel_size.setMaximum(999999)
         self.spinBox_pixel_size.setObjectName("spinBox_pixel_size")
-        self.pushButton_reset = QtWidgets.QPushButton(Dialog)
-        self.pushButton_reset.setGeometry(QtCore.QRect(370, 130, 93, 28))
-        self.pushButton_reset.setObjectName("pushButton_reset")
-        self.label_offset_pixel_grid = QtWidgets.QLabel(Dialog)
-        self.label_offset_pixel_grid.setGeometry(QtCore.QRect(370, 40, 101, 16))
+        self.label_offset_pixel_grid = QtWidgets.QLabel(self.groupBox_pixels)
+        self.label_offset_pixel_grid.setGeometry(QtCore.QRect(10, 50, 101, 16))
         self.label_offset_pixel_grid.setObjectName("label_offset_pixel_grid")
-        self.spinBox_offset_pixel_grid = QtWidgets.QSpinBox(Dialog)
-        self.spinBox_offset_pixel_grid.setGeometry(QtCore.QRect(500, 40, 61, 22))
+        self.spinBox_offset_pixel_grid = QtWidgets.QSpinBox(self.groupBox_pixels)
+        self.spinBox_offset_pixel_grid.setGeometry(QtCore.QRect(110, 50, 61, 22))
         self.spinBox_offset_pixel_grid.setObjectName("spinBox_offset_pixel_grid")
+        self.checkBox_display_grid = QtWidgets.QCheckBox(self.groupBox_pixels)
+        self.checkBox_display_grid.setGeometry(QtCore.QRect(10, 80, 91, 20))
+        self.checkBox_display_grid.setObjectName("checkBox_display_grid")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -58,9 +74,14 @@ class Ui_Dialog(object):
         self.pushButton_go.setText(_translate("Dialog", "Go"))
         self.pushButton_validate.setText(_translate("Dialog", "Validate"))
         self.pushButton_cancel.setText(_translate("Dialog", "Cancel"))
-        self.label_pixel_size.setText(_translate("Dialog", "Pixel size:"))
         self.pushButton_reset.setText(_translate("Dialog", "Reset"))
+        self.groupBox_pixelisation_type.setTitle(_translate("Dialog", "Pixelisation type"))
+        self.radioButton_common_colour.setText(_translate("Dialog", "Most common colour"))
+        self.radioButton_colours_average.setText(_translate("Dialog", "Colours\' average"))
+        self.groupBox_pixels.setTitle(_translate("Dialog", "Pixels"))
+        self.label_pixel_size.setText(_translate("Dialog", "Pixel size:"))
         self.label_offset_pixel_grid.setText(_translate("Dialog", "Offset pixel grid:"))
+        self.checkBox_display_grid.setText(_translate("Dialog", "Display grid"))
 
 class PixelPerfect(QtWidgets.QDialog, Ui_Dialog):
     def __init__(self, original_image=None, name=None, parent=None):
@@ -119,11 +140,21 @@ class PixelPerfect(QtWidgets.QDialog, Ui_Dialog):
                                                              (y * pixel_size) + pixel_size + grid_offset))
 
                 colours = sub_image.getcolors(sub_image.size[0] * sub_image.size[1])
-                # TODO: check if max() behaviour is correct
-                dominant_colour = max(colours, key=lambda x: x[0])[1]
+
+                # Pink debugging default colour
+                final_colour = (255, 0, 255)
+                if self.radioButton_common_colour.isChecked():
+                    final_colour = max(colours, key=lambda x: x[0])[1]
+
+                elif self.radioButton_colours_average.isChecked():
+                    for i, colour in enumerate(colours):
+                        colours[i] = cvtColor(np.asarray([[colour[1]]], dtype='float32') / 255, COLOR_RGB2Lab)
+
+                    final_colour = sum(colours) / len(colours)
+                    final_colour = cvtColor(final_colour, COLOR_Lab2RGB) * 255
 
                 img_as_array[y * pixel_size  + grid_offset : (y * pixel_size) + pixel_size + grid_offset,
-                             x * pixel_size  + grid_offset : (x * pixel_size) + pixel_size + grid_offset] = dominant_colour
+                             x * pixel_size  + grid_offset : (x * pixel_size) + pixel_size + grid_offset] = final_colour
 
 
 

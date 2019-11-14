@@ -6,6 +6,7 @@ from number_display import NumberDisplay
 from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtGui
 
+#TODO: replace skimage rgb2lab by OpenCV RGB2Lab (way faster)
 def resize_image(img, max_size):
     size = list(np.asarray(img).shape[:2])
 

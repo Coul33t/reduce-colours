@@ -232,7 +232,10 @@ class Ui_MainWindow(object):
         self.show_all()
 
     def open_pixel_perfect(self):
-        self.pixel_perfect = PixelPerfect(self.initial_img)
+        if self.new_img is not None:
+             self.pixel_perfect = PixelPerfect(self.new_img)
+        else:
+            self.pixel_perfect = PixelPerfect(self.initial_img)
 
     def check_if_colour_exists(self, colour):
         for index in range(self.model_listView_choosen_colours.rowCount()):
