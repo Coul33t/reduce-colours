@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>739</width>
-    <height>601</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,24 +115,11 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2_choosen_colours">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>70</y>
-      <width>101</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Choosen colours:</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_go">
     <property name="geometry">
      <rect>
       <x>540</x>
-      <y>520</y>
+      <y>540</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -145,7 +132,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>460</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -184,7 +171,7 @@
     <property name="geometry">
      <rect>
       <x>640</x>
-      <y>520</y>
+      <y>540</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -232,42 +219,6 @@
      <string>Add colour</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_add_mouse_colour">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>480</y>
-      <width>61</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_change_mouse_colour">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>510</y>
-      <width>61</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Change</string>
-    </property>
-   </widget>
-   <widget class="QListView" name="listView_mouse_colour">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>480</y>
-      <width>71</width>
-      <height>21</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_merge_colours">
     <property name="geometry">
      <rect>
@@ -295,13 +246,96 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>510</y>
+      <y>520</y>
       <width>93</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
      <string>Pixel Perfect</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>460</y>
+      <width>120</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Mouse colour</string>
+    </property>
+    <widget class="QListView" name="listView_mouse_colour">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_add">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>95</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_change">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>95</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Change</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label_already_in_list">
+    <property name="geometry">
+     <rect>
+      <x>394</x>
+      <y>59</y>
+      <width>331</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_to_dmc_colours">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>490</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>To DMC colour</string>
     </property>
    </widget>
   </widget>

@@ -99,6 +99,10 @@ class PixelPerfect(QtWidgets.QDialog, Ui_Dialog):
         self.resized_pixel_perfected_image = None
         self.qimage_resized_pixel_perfected = None
 
+        self.displayed_image = None
+
+        self.grid_overlay = None
+
         self.link_components()
 
         self.display_original_image()
@@ -118,8 +122,32 @@ class PixelPerfect(QtWidgets.QDialog, Ui_Dialog):
 
     def display_original_image(self):
         self.qimage_resized_original = ImageQt.ImageQt(self.resized_original_image)
-        reference_img = QtGui.QPixmap.fromImage(self.qimage_resized_original)
-        self.label_img.setPixmap(reference_img)
+        self.displayed_image = QtGui.QPixmap.fromImage(self.qimage_resized_original)
+        self.label_img.setPixmap(self.displayed_image)
+
+    def create_pixel_grid(self):
+        grid_size = self.spinBox_pixel_size.value()
+
+        self.grid_overlay = None
+        self.grid_overlay = np.zeros((self.label_size[0], self.label_size[1], 4), dtype='uint8')
+
+        for i in range(floor(self.label_size[0] / grid_size)):
+            for j in range(floor(self.label_size[1] / grid_size)):
+
+                colour = np.array([200, 200, 200, 127]).astype('uint8')
+                if i % 2 == 0 and j % 2 == 0:
+                    colour = np.array([175, 175, 175, 127]).astype('uint8')
+
+                for x in range(i * grid_size, (i * grid_size) + grid_size + 1):
+                    for y in range(j * grid_size, (j * grid_size) + grid_size + 1):
+                        self.grid_overlay[x, y] = colour
+
+        print(self.grid_overlay)
+        self.grid_overlay = Image.fromarray(self.grid_overlay, mode='RGBA')
+        self.grid_overlay = ImageQt.ImageQt(self.grid_overlay)
+        self.grid_overlay = QtGui.QPixmap.fromImage(self.grid_overlay)
+
+
 
     def pixelate_image(self):
         grid_offset = int(self.spinBox_offset_pixel_grid.value())
@@ -153,19 +181,16 @@ class PixelPerfect(QtWidgets.QDialog, Ui_Dialog):
                     final_colour = sum(colours) / len(colours)
                     final_colour = cvtColor(final_colour, COLOR_Lab2RGB) * 255
 
-                img_as_array[y * pixel_size  + grid_offset : (y * pixel_size) + pixel_size + grid_offset,
-                             x * pixel_size  + grid_offset : (x * pixel_size) + pixel_size + grid_offset] = final_colour
-
+                img_as_array[y * pixel_size + grid_offset: (y * pixel_size) + pixel_size + grid_offset,
+                             x * pixel_size + grid_offset: (x * pixel_size) + pixel_size + grid_offset] = final_colour
 
 
         self.pixel_perfected_image = Image.fromarray(img_as_array, mode='RGB')
         self.resized_pixel_perfected_image = resize_image(self.pixel_perfected_image, self.label_size)
         self.qimage_resized_pixel_perfected = ImageQt.ImageQt(self.resized_pixel_perfected_image)
-        reference_img = QtGui.QPixmap.fromImage(self.qimage_resized_pixel_perfected)
-        self.label_img.setPixmap(reference_img)
-
+        self.displayed_image = QtGui.QPixmap.fromImage(self.qimage_resized_pixel_perfected)
+        self.label_img.setPixmap(self.displayed_image)
 
     def return_image(self):
-        pass
         self.close_window()
 

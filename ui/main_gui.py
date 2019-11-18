@@ -8,6 +8,8 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import json
+
 from math import floor
 from PIL import Image, ImageQt
 import numpy as np
@@ -27,7 +29,13 @@ class Ui_MainWindow(object):
         self.model_listView_choosen_colours = None
         self.model_listView_mouse_colour = None
         self.pixel_perfect = None
+        self.colour_corres_list = None
 
+        with open('colours.json', 'r') as json_colours_file:
+            self.colour_corres_list = json.load(json_colours_file)
+
+        ui_funcs.convert_rgb_to_numpy_array(self.colour_corres_list)
+        ui_funcs.add_Lab(self.colour_corres_list)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -63,9 +71,6 @@ class Ui_MainWindow(object):
         self.listView_choosen_colours = QtWidgets.QListView(self.centralwidget)
         self.listView_choosen_colours.setGeometry(QtCore.QRect(390, 90, 341, 361))
         self.listView_choosen_colours.setObjectName("listView_choosen_colours")
-        self.label_2_choosen_colours = QtWidgets.QLabel(self.centralwidget)
-        self.label_2_choosen_colours.setGeometry(QtCore.QRect(390, 70, 101, 16))
-        self.label_2_choosen_colours.setObjectName("label_2_choosen_colours")
         self.pushButton_go = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_go.setGeometry(QtCore.QRect(540, 520, 93, 28))
         self.pushButton_go.setObjectName("pushButton_go")
@@ -91,15 +96,6 @@ class Ui_MainWindow(object):
         self.pushButton_add_colour = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_add_colour.setGeometry(QtCore.QRect(440, 460, 93, 28))
         self.pushButton_add_colour.setObjectName("pushButton_add_colour")
-        self.pushButton_add_mouse_colour = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_add_mouse_colour.setGeometry(QtCore.QRect(300, 480, 61, 28))
-        self.pushButton_add_mouse_colour.setObjectName("pushButton_add_mouse_colour")
-        self.pushButton_change_mouse_colour = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_change_mouse_colour.setGeometry(QtCore.QRect(300, 510, 61, 28))
-        self.pushButton_change_mouse_colour.setObjectName("pushButton_change_mouse_colour")
-        self.listView_mouse_colour = QtWidgets.QListView(self.centralwidget)
-        self.listView_mouse_colour.setGeometry(QtCore.QRect(220, 480, 71, 21))
-        self.listView_mouse_colour.setObjectName("listView")
         self.pushButton_merge_colours = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_merge_colours.setGeometry(QtCore.QRect(440, 490, 93, 28))
         self.pushButton_merge_colours.setObjectName("pushButton_merge_colours")
@@ -109,6 +105,29 @@ class Ui_MainWindow(object):
         self.pushButton_pixel_perfect = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_pixel_perfect.setGeometry(QtCore.QRect(10, 510, 93, 28))
         self.pushButton_pixel_perfect.setObjectName("pushButton_pixel_perfect")
+        self.groupBox_mouse_colour = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_mouse_colour.setGeometry(QtCore.QRect(250, 460, 120, 91))
+        self.groupBox_mouse_colour.setObjectName("groupBox")
+        self.listView_mouse_colour = QtWidgets.QListView(self.groupBox_mouse_colour)
+        self.listView_mouse_colour.setGeometry(QtCore.QRect(10, 20, 71, 21))
+        self.listView_mouse_colour.setObjectName("listView_mouse_colour")
+        self.radioButton_add = QtWidgets.QRadioButton(self.groupBox_mouse_colour)
+        self.radioButton_add.setGeometry(QtCore.QRect(10, 40, 95, 20))
+        self.radioButton_add.setChecked(True)
+        self.radioButton_add.setObjectName("radioButton_add")
+        self.radioButton_change = QtWidgets.QRadioButton(self.groupBox_mouse_colour)
+        self.radioButton_change.setGeometry(QtCore.QRect(10, 60, 95, 20))
+        self.radioButton_change.setObjectName("radioButton_change")
+        self.label_already_in_list = QtWidgets.QLabel(self.centralwidget)
+        self.label_already_in_list.setGeometry(QtCore.QRect(394, 59, 331, 31))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.label_already_in_list.setFont(font)
+        self.label_already_in_list.setText("")
+        self.label_already_in_list.setObjectName("label_already_in_list")
+        self.pushButton_to_dmc_colours = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_to_dmc_colours.setGeometry(QtCore.QRect(540, 490, 93, 28))
+        self.pushButton_to_dmc_colours.setObjectName("pushButton_to_dmc_colours")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 739, 26))
@@ -130,7 +149,6 @@ class Ui_MainWindow(object):
         self.pushButton_import.setText(_translate("MainWindow", "Import"))
         self.label_n_colours.setText(_translate("MainWindow", "Final number of colours:"))
         self.pushButton_n_colours.setText(_translate("MainWindow", "Ok"))
-        self.label_2_choosen_colours.setText(_translate("MainWindow", "Choosen colours:"))
         self.pushButton_go.setText(_translate("MainWindow", "Go!"))
         self.pushButton_reset.setText(_translate("MainWindow", "Reset"))
         self.label_total_number_of_colour.setText(_translate("MainWindow", "Total Number of colours:"))
@@ -138,10 +156,12 @@ class Ui_MainWindow(object):
         self.pushButton_delete_colour.setText(_translate("MainWindow", "Delete"))
         self.pushButton_change_colour.setText(_translate("MainWindow", "Change colour"))
         self.pushButton_add_colour.setText(_translate("MainWindow", "Add colour"))
-        self.pushButton_add_mouse_colour.setText(_translate("MainWindow", "Add"))
-        self.pushButton_change_mouse_colour.setText(_translate("MainWindow", "Change"))
         self.pushButton_merge_colours.setText(_translate("MainWindow", "Merge"))
         self.pushButton_pixel_perfect.setText(_translate("MainWindow", "Pixel Perfect"))
+        self.groupBox_mouse_colour.setTitle(_translate("MainWindow", "Mouse colour"))
+        self.radioButton_add.setText(_translate("MainWindow", "Add"))
+        self.radioButton_change.setText(_translate("MainWindow", "Change"))
+        self.pushButton_to_dmc_colours.setText(_translate("MainWindow", "To DMC colour"))
 
     def initialise(self):
         self.model_listView_choosen_colours = QtGui.QStandardItemModel(self.listView_choosen_colours)
@@ -154,7 +174,7 @@ class Ui_MainWindow(object):
     def hide_all(self):
         self.label_n_colours.hide()
         self.pushButton_n_colours.hide()
-        self.label_2_choosen_colours.hide()
+        self.label_already_in_list.hide()
         self.pushButton_go.hide()
         self.pushButton_reset.hide()
         self.label_total_number_of_colour.hide()
@@ -162,19 +182,19 @@ class Ui_MainWindow(object):
         self.pushButton_delete_colour.hide()
         self.pushButton_change_colour.hide()
         self.pushButton_add_colour.hide()
-        self.pushButton_add_mouse_colour.hide()
-        self.pushButton_change_mouse_colour.hide()
         self.listView_choosen_colours.hide()
         self.listView_mouse_colour.hide()
         self.spinBox_n_colours.hide()
         self.spinBox_merge_colours.hide()
         self.pushButton_merge_colours.hide()
         self.pushButton_pixel_perfect.hide()
+        self.groupBox_mouse_colour.hide()
+        self.pushButton_to_dmc_colours.hide()
 
     def show_all(self):
         self.label_n_colours.show()
         self.pushButton_n_colours.show()
-        self.label_2_choosen_colours.show()
+        self.label_already_in_list.show()
         self.pushButton_go.show()
         self.pushButton_reset.show()
         self.label_total_number_of_colour.show()
@@ -182,14 +202,14 @@ class Ui_MainWindow(object):
         self.pushButton_delete_colour.show()
         self.pushButton_change_colour.show()
         self.pushButton_add_colour.show()
-        self.pushButton_add_mouse_colour.show()
-        self.pushButton_change_mouse_colour.show()
         self.listView_choosen_colours.show()
         self.listView_mouse_colour.show()
         self.spinBox_n_colours.show()
         self.spinBox_merge_colours.show()
         self.pushButton_merge_colours.show()
         self.pushButton_pixel_perfect.show()
+        self.groupBox_mouse_colour.show()
+        self.pushButton_to_dmc_colours.show()
 
 
     def link_components(self):
@@ -198,14 +218,13 @@ class Ui_MainWindow(object):
         self.pushButton_go.clicked.connect(self.generate_output)
         self.pushButton_reset.clicked.connect(self.reset_displayed_image)
         self.pushButton_save.clicked.connect(self.save_output_image)
-        self.pushButton_add_colour.clicked.connect(self.add_colour)
+        self.pushButton_add_colour.clicked.connect(self.add_colour_from_picker)
         self.pushButton_delete_colour.clicked.connect(self.delete_colour)
-        self.pushButton_change_colour.clicked.connect(self.change_colour)
+        self.pushButton_change_colour.clicked.connect(self.change_colour_from_picker)
         self.label_original_image.mousePressEvent = self.get_colour_under_mouse
-        self.pushButton_add_mouse_colour.clicked.connect(self.add_mouse_colour)
-        self.pushButton_change_mouse_colour.clicked.connect(self.change_mouse_colour)
         self.pushButton_merge_colours.clicked.connect(self.merge_colours)
         self.pushButton_pixel_perfect.clicked.connect(self.open_pixel_perfect)
+        self.pushButton_to_dmc_colours.clicked.connect(self.to_dmc_colours)
 
     def select_file(self):
         string = QtWidgets.QFileDialog.getOpenFileName(filter="Image Files (*.png *.jpg *.bmp)")
@@ -233,15 +252,37 @@ class Ui_MainWindow(object):
 
     def open_pixel_perfect(self):
         if self.new_img is not None:
-             self.pixel_perfect = PixelPerfect(self.new_img)
+            self.pixel_perfect = PixelPerfect(self.new_img)
         else:
             self.pixel_perfect = PixelPerfect(self.initial_img)
 
     def check_if_colour_exists(self, colour):
         for index in range(self.model_listView_choosen_colours.rowCount()):
-            if colour == self.model_listView_choosen_colours.item(index).background().color():
+            if colour == self.model_listView_choosen_colours.item(index).background().color().getRgb()[:-1]:
                 return True
         return False
+
+    def add_colour_to_listview(self, colour_to_add):
+        if isinstance(colour_to_add, QtGui.QColor):
+            colour_to_add = colour_to_add.getRgb()[:-1]
+
+        colour_to_add = tuple(colour_to_add)
+
+        if self.check_if_colour_exists(colour_to_add):
+            self.colour_already_in_list(colour_to_add)
+            return
+
+        closest = ui_funcs.get_closest_colour(colour_to_add, self.colour_corres_list)
+        item = QtGui.QStandardItem(closest[1]['DMC Name'])
+
+        item.setForeground((QtGui.QColor(int(closest[2][0] * 255),
+                                         int(closest[2][1] * 255),
+                                         int(closest[2][2] * 255))))
+
+        item.setBackground(QtGui.QColor(int(colour_to_add[0]),
+                                        int(colour_to_add[1]),
+                                        int(colour_to_add[2])))
+        self.model_listView_choosen_colours.appendRow(item)
 
     def get_colours(self):
         self.model_listView_choosen_colours.clear()
@@ -253,32 +294,25 @@ class Ui_MainWindow(object):
 
         # TODO: order the list by colour proximity (purely aesthetic)
         for colour in self.colours_to_display:
-            # create an item with a caption
-            item = QtGui.QStandardItem()
-
-            item.setBackground(QtGui.QColor(int(colour[0] * 255), int(colour[1] * 255), int(colour[2] * 255)))
-            # Add the item to the model
-            self.model_listView_choosen_colours.appendRow(item)
+            self.add_colour_to_listview(colour)
 
     def colour_already_in_list(self, colour):
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Information)
-        msg.setText(f"Colour {colour.getRgb()[:-1]} already in the list.")
-        msg.exec_()
+        self.label_already_in_list.setText(f"{colour} already in list")
 
-    def add_colour(self):
-        new_colour = QtWidgets.QColorDialog.getColor().name()
+    def add_colour_from_picker(self):
+        new_colour = QtWidgets.QColorDialog.getColor()
+
+        print(new_colour)
 
         if not new_colour:
             return
 
-        if self.check_if_colour_exists(new_colour):
-            self.colour_already_in_list(new_colour)
-            return
+        self.add_colour_to_listview(new_colour)
 
-        item = QtGui.QStandardItem()
-        item.setBackground(QtGui.QColor(new_colour))
-        self.model_listView_choosen_colours.appendRow(item)
+    def change_colour_from_picker(self):
+        new_colour = QtWidgets.QColorDialog.getColor()
+
+        self.change_colour(new_colour)
 
     def add_mouse_colour(self):
         if self.model_listView_mouse_colour.item(0) is None:
@@ -286,17 +320,9 @@ class Ui_MainWindow(object):
 
         new_colour = self.model_listView_mouse_colour.item(0).background().color()
 
-        if self.check_if_colour_exists(new_colour):
-            self.colour_already_in_list(new_colour)
-            return
+        self.add_colour_to_listview(new_colour)
 
-        item = QtGui.QStandardItem()
-        item.setBackground(new_colour)
-        self.model_listView_choosen_colours.appendRow(item)
-
-    def change_mouse_colour(self):
-        new_colour = self.model_listView_mouse_colour.item(0).background().color()
-
+    def change_colour(self, new_colour):
         if self.check_if_colour_exists(new_colour):
             self.colour_already_in_list(new_colour)
             return
@@ -305,20 +331,10 @@ class Ui_MainWindow(object):
         if len(index) < 1:
             return
 
-        self.model_listView_choosen_colours.itemFromIndex(index[0]).setBackground(new_colour)
-
-    def change_colour(self):
-        new_colour = QtWidgets.QColorDialog.getColor()
-
-        if self.check_if_colour_exists(new_colour):
-            self.colour_already_in_list(new_colour)
-            return
-
-        index = self.listView_choosen_colours.selectedIndexes()
-        if len(index) < 1:
-            return
-
-        self.model_listView_choosen_colours.itemFromIndex(index[0]).setBackground(QtGui.QColor(new_colour))
+        bg_colour = QtGui.QColor(int(new_colour[0]),
+                                 int(new_colour[1]),
+                                 int(new_colour[2]))
+        self.model_listView_choosen_colours.itemFromIndex(index[0]).setBackground(bg_colour)
 
 
     def delete_colour(self):
@@ -337,16 +353,27 @@ class Ui_MainWindow(object):
         colour = self.resized_initial_img.pixel(x, y)
         rgb = QtGui.QColor(colour).getRgb()[0:3]
 
+        if self.radioButton_add.isChecked():
+            self.add_colour_to_listview(rgb)
+
+        elif self.radioButton_change.isChecked():
+            self.change_colour(rgb)
 
         item = QtGui.QStandardItem()
-        item.setBackground(QtGui.QColor(rgb[0], rgb[1], rgb[2]))
+        item.setBackground(QtGui.QColor(int(rgb[0]),
+                                        int(rgb[1]),
+                                        int(rgb[2])))
+
         self.model_listView_mouse_colour.removeRow(0)
-        # Add the item to the model
         self.model_listView_mouse_colour.appendRow(item)
+
 
     def merge_colours(self):
         ui_funcs.merge_colours(self.model_listView_choosen_colours,
                                self.spinBox_merge_colours.value())
+
+    def to_dmc_colours(self):
+        pass
 
 
 

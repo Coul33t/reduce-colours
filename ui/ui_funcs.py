@@ -5,6 +5,7 @@ from progress_bar import ProgressBar
 from number_display import NumberDisplay
 from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtGui
+import cv2
 
 #TODO: replace skimage rgb2lab by OpenCV RGB2Lab (way faster)
 def resize_image(img, max_size):
@@ -43,7 +44,7 @@ def get_colours(img, final_colour_number):
         final_colour_number = len(all_colours_rgb)
 
     # Convert tuples into lists
-    all_colours_rgb = [[x[0], np.asarray(x[1]) / 255] for x in all_colours_rgb]
+    all_colours_rgb = [[x[0], np.asarray(x[1])] for x in all_colours_rgb]
 
     final_colours = []
 
@@ -133,3 +134,39 @@ def merge_colours(listView_colours, threshold):
         all_to_merge = np.where(np.logical_and(similarity_matrix > 0, similarity_matrix < threshold))
 
     number_display_window.close()
+
+def convert_rgb_to_numpy_array(colours_list):
+    for colour in colours_list:
+        colour['RGB'] = np.asarray(colour['RGB']) / 255
+
+def add_Lab(colours_list):
+    for colour in colours_list:
+        rgb_colour = np.array(colour['RGB'], dtype=np.float32)
+        colour_to_lab = cv2.cvtColor(np.asarray([[rgb_colour]]), cv2.COLOR_RGB2Lab)[0][0]
+        colour['Lab'] = colour_to_lab
+
+def get_closest_colour(rgb_colour, colour_corres_list):
+    closest = [99999, None, None]
+
+    lab_colour = cv2.cvtColor(np.asarray([[rgb_colour]], dtype='float32') / 255, cv2.COLOR_RGB2Lab)[0][0]
+
+    for colour_in_list in colour_corres_list:
+        distance = dst(lab_colour, colour_in_list['Lab'])
+        if distance < closest[0]:
+            closest[0] = distance
+            closest[1] = colour_in_list
+
+    closest[2] = luminance(np.asarray(closest[1]['RGB']))
+    return closest
+
+
+def luminance(colour):
+    """
+        Compute the luminance of a colour, and return the adequate colour
+        to write on the initial one (black or white).
+    """
+    print(0.299 * colour[0] + 0.587 * colour[1] + 0.114 * colour[2])
+    if (0.299 * colour[0] + 0.587 * colour[1] + 0.114 * colour[2]) > 0.5:
+        return np.array([0, 0, 0])
+
+    return np.array([1, 1, 1])
