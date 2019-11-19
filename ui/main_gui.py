@@ -39,7 +39,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(739, 601)
+        MainWindow.resize(881, 609)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton_import = QtWidgets.QPushButton(self.centralwidget)
@@ -69,13 +69,13 @@ class Ui_MainWindow(object):
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.listView_choosen_colours = QtWidgets.QListView(self.centralwidget)
-        self.listView_choosen_colours.setGeometry(QtCore.QRect(390, 90, 341, 361))
+        self.listView_choosen_colours.setGeometry(QtCore.QRect(530, 90, 341, 461))
         self.listView_choosen_colours.setObjectName("listView_choosen_colours")
         self.pushButton_go = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_go.setGeometry(QtCore.QRect(540, 520, 93, 28))
+        self.pushButton_go.setGeometry(QtCore.QRect(390, 490, 93, 28))
         self.pushButton_go.setObjectName("pushButton_go")
         self.pushButton_reset = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_reset.setGeometry(QtCore.QRect(10, 480, 93, 28))
+        self.pushButton_reset.setGeometry(QtCore.QRect(10, 460, 93, 28))
         self.pushButton_reset.setObjectName("pushButton_reset")
         self.label_total_number_of_colour = QtWidgets.QLabel(self.centralwidget)
         self.label_total_number_of_colour.setGeometry(QtCore.QRect(390, 10, 191, 16))
@@ -85,29 +85,14 @@ class Ui_MainWindow(object):
         self.label_image_generation.setText("")
         self.label_image_generation.setObjectName("label_image_generation")
         self.pushButton_save = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_save.setGeometry(QtCore.QRect(640, 520, 93, 28))
+        self.pushButton_save.setGeometry(QtCore.QRect(390, 520, 93, 28))
         self.pushButton_save.setObjectName("pushButton_save")
-        self.pushButton_delete_colour = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_delete_colour.setGeometry(QtCore.QRect(640, 460, 93, 28))
-        self.pushButton_delete_colour.setObjectName("pushButton_delete_colour")
-        self.pushButton_change_colour = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_change_colour.setGeometry(QtCore.QRect(540, 460, 93, 28))
-        self.pushButton_change_colour.setObjectName("pushButton_change_colour")
-        self.pushButton_add_colour = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_add_colour.setGeometry(QtCore.QRect(440, 460, 93, 28))
-        self.pushButton_add_colour.setObjectName("pushButton_add_colour")
-        self.pushButton_merge_colours = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_merge_colours.setGeometry(QtCore.QRect(440, 490, 93, 28))
-        self.pushButton_merge_colours.setObjectName("pushButton_merge_colours")
-        self.spinBox_merge_colours = QtWidgets.QSpinBox(self.centralwidget)
-        self.spinBox_merge_colours.setGeometry(QtCore.QRect(390, 490, 42, 22))
-        self.spinBox_merge_colours.setObjectName("spinBox_merge_colours")
         self.pushButton_pixel_perfect = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_pixel_perfect.setGeometry(QtCore.QRect(10, 510, 93, 28))
+        self.pushButton_pixel_perfect.setGeometry(QtCore.QRect(10, 520, 93, 28))
         self.pushButton_pixel_perfect.setObjectName("pushButton_pixel_perfect")
         self.groupBox_mouse_colour = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_mouse_colour.setGeometry(QtCore.QRect(250, 460, 120, 91))
-        self.groupBox_mouse_colour.setObjectName("groupBox")
+        self.groupBox_mouse_colour.setObjectName("groupBox_mouse_colour")
         self.listView_mouse_colour = QtWidgets.QListView(self.groupBox_mouse_colour)
         self.listView_mouse_colour.setGeometry(QtCore.QRect(10, 20, 71, 21))
         self.listView_mouse_colour.setObjectName("listView_mouse_colour")
@@ -119,14 +104,48 @@ class Ui_MainWindow(object):
         self.radioButton_change.setGeometry(QtCore.QRect(10, 60, 95, 20))
         self.radioButton_change.setObjectName("radioButton_change")
         self.label_already_in_list = QtWidgets.QLabel(self.centralwidget)
-        self.label_already_in_list.setGeometry(QtCore.QRect(394, 59, 331, 31))
+        self.label_already_in_list.setGeometry(QtCore.QRect(530, 50, 331, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_already_in_list.setFont(font)
         self.label_already_in_list.setText("")
         self.label_already_in_list.setObjectName("label_already_in_list")
-        self.pushButton_to_dmc_colours = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_to_dmc_colours.setGeometry(QtCore.QRect(540, 490, 93, 28))
+        self.groupBox_colours = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_colours.setGeometry(QtCore.QRect(390, 90, 131, 121))
+        self.groupBox_colours.setObjectName("groupBox_colours")
+        self.pushButton_add_colour = QtWidgets.QPushButton(self.groupBox_colours)
+        self.pushButton_add_colour.setGeometry(QtCore.QRect(20, 20, 93, 28))
+        self.pushButton_add_colour.setObjectName("pushButton_add_colour")
+        self.pushButton_delete_colour = QtWidgets.QPushButton(self.groupBox_colours)
+        self.pushButton_delete_colour.setGeometry(QtCore.QRect(20, 80, 93, 28))
+        self.pushButton_delete_colour.setObjectName("pushButton_delete_colour")
+        self.pushButton_change_colour = QtWidgets.QPushButton(self.groupBox_colours)
+        self.pushButton_change_colour.setGeometry(QtCore.QRect(20, 50, 93, 28))
+        self.pushButton_change_colour.setObjectName("pushButton_change_colour")
+        self.groupBox_auto_merging = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_auto_merging.setGeometry(QtCore.QRect(390, 220, 131, 91))
+        self.groupBox_auto_merging.setObjectName("groupBox_auto_merging")
+        self.pushButton_merge_colours = QtWidgets.QPushButton(self.groupBox_auto_merging)
+        self.pushButton_merge_colours.setGeometry(QtCore.QRect(10, 50, 93, 28))
+        self.pushButton_merge_colours.setObjectName("pushButton_merge_colours")
+        self.spinBox_merge_colours = QtWidgets.QSpinBox(self.groupBox_auto_merging)
+        self.spinBox_merge_colours.setGeometry(QtCore.QRect(80, 20, 42, 22))
+        self.spinBox_merge_colours.setObjectName("spinBox_merge_colours")
+        self.label_colours_merging = QtWidgets.QLabel(self.groupBox_auto_merging)
+        self.label_colours_merging.setGeometry(QtCore.QRect(10, 20, 71, 16))
+        self.label_colours_merging.setObjectName("label_colours_merging")
+        self.groupBox_to_dmc = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_to_dmc.setGeometry(QtCore.QRect(390, 320, 120, 101))
+        self.groupBox_to_dmc.setObjectName("groupBox_to_dmc")
+        self.radioButton_to_dmc_lab = QtWidgets.QRadioButton(self.groupBox_to_dmc)
+        self.radioButton_to_dmc_lab.setGeometry(QtCore.QRect(10, 20, 95, 20))
+        self.radioButton_to_dmc_lab.setChecked(True)
+        self.radioButton_to_dmc_lab.setObjectName("radioButton_to_dmc_lab")
+        self.radioButton_to_dmc_rgb = QtWidgets.QRadioButton(self.groupBox_to_dmc)
+        self.radioButton_to_dmc_rgb.setGeometry(QtCore.QRect(10, 40, 95, 20))
+        self.radioButton_to_dmc_rgb.setObjectName("radioButton_to_dmc_rgb")
+        self.pushButton_to_dmc_colours = QtWidgets.QPushButton(self.groupBox_to_dmc)
+        self.pushButton_to_dmc_colours.setGeometry(QtCore.QRect(10, 60, 93, 28))
         self.pushButton_to_dmc_colours.setObjectName("pushButton_to_dmc_colours")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -153,14 +172,20 @@ class Ui_MainWindow(object):
         self.pushButton_reset.setText(_translate("MainWindow", "Reset"))
         self.label_total_number_of_colour.setText(_translate("MainWindow", "Total Number of colours:"))
         self.pushButton_save.setText(_translate("MainWindow", "Save"))
-        self.pushButton_delete_colour.setText(_translate("MainWindow", "Delete"))
-        self.pushButton_change_colour.setText(_translate("MainWindow", "Change colour"))
-        self.pushButton_add_colour.setText(_translate("MainWindow", "Add colour"))
-        self.pushButton_merge_colours.setText(_translate("MainWindow", "Merge"))
         self.pushButton_pixel_perfect.setText(_translate("MainWindow", "Pixel Perfect"))
         self.groupBox_mouse_colour.setTitle(_translate("MainWindow", "Mouse colour"))
         self.radioButton_add.setText(_translate("MainWindow", "Add"))
         self.radioButton_change.setText(_translate("MainWindow", "Change"))
+        self.groupBox_colours.setTitle(_translate("MainWindow", "Colours"))
+        self.pushButton_add_colour.setText(_translate("MainWindow", "Add colour"))
+        self.pushButton_delete_colour.setText(_translate("MainWindow", "Delete"))
+        self.pushButton_change_colour.setText(_translate("MainWindow", "Change colour"))
+        self.groupBox_auto_merging.setTitle(_translate("MainWindow", "Auto-merging"))
+        self.pushButton_merge_colours.setText(_translate("MainWindow", "Merge"))
+        self.label_colours_merging.setText(_translate("MainWindow", "Threshold:"))
+        self.groupBox_to_dmc.setTitle(_translate("MainWindow", "To DMC colours"))
+        self.radioButton_to_dmc_lab.setText(_translate("MainWindow", "L*a*b*"))
+        self.radioButton_to_dmc_rgb.setText(_translate("MainWindow", "RGB"))
         self.pushButton_to_dmc_colours.setText(_translate("MainWindow", "To DMC colour"))
 
     def initialise(self):
@@ -179,17 +204,14 @@ class Ui_MainWindow(object):
         self.pushButton_reset.hide()
         self.label_total_number_of_colour.hide()
         self.pushButton_save.hide()
-        self.pushButton_delete_colour.hide()
-        self.pushButton_change_colour.hide()
-        self.pushButton_add_colour.hide()
+        self.groupBox_colours.hide()
         self.listView_choosen_colours.hide()
         self.listView_mouse_colour.hide()
         self.spinBox_n_colours.hide()
-        self.spinBox_merge_colours.hide()
-        self.pushButton_merge_colours.hide()
+        self.groupBox_auto_merging.hide()
         self.pushButton_pixel_perfect.hide()
         self.groupBox_mouse_colour.hide()
-        self.pushButton_to_dmc_colours.hide()
+        self.groupBox_to_dmc.hide()
 
     def show_all(self):
         self.label_n_colours.show()
@@ -199,17 +221,14 @@ class Ui_MainWindow(object):
         self.pushButton_reset.show()
         self.label_total_number_of_colour.show()
         self.pushButton_save.show()
-        self.pushButton_delete_colour.show()
-        self.pushButton_change_colour.show()
-        self.pushButton_add_colour.show()
+        self.groupBox_colours.show()
         self.listView_choosen_colours.show()
         self.listView_mouse_colour.show()
         self.spinBox_n_colours.show()
-        self.spinBox_merge_colours.show()
-        self.pushButton_merge_colours.show()
+        self.groupBox_auto_merging.show()
         self.pushButton_pixel_perfect.show()
         self.groupBox_mouse_colour.show()
-        self.pushButton_to_dmc_colours.show()
+        self.groupBox_to_dmc.show()
 
 
     def link_components(self):
@@ -273,7 +292,8 @@ class Ui_MainWindow(object):
             return
 
         closest = ui_funcs.get_closest_colour(colour_to_add, self.colour_corres_list)
-        item = QtGui.QStandardItem(closest[1]['DMC Name'])
+        rgb_value = f'({int(colour_to_add[0])},{int(colour_to_add[1])},{int(colour_to_add[2])})'
+        item = QtGui.QStandardItem(f'{closest[1]["DMC Name"]} {rgb_value}')
 
         item.setForeground((QtGui.QColor(int(closest[2][0] * 255),
                                          int(closest[2][1] * 255),
@@ -373,7 +393,25 @@ class Ui_MainWindow(object):
                                self.spinBox_merge_colours.value())
 
     def to_dmc_colours(self):
-        pass
+        colours_list = []
+        for i in range(self.model_listView_choosen_colours.rowCount()):
+            item = self.model_listView_choosen_colours.item(i)
+            colours_list.append(np.asarray(item.background().color().getRgb()[0:3]))
+
+        colour_space = None
+
+        if self.radioButton_to_dmc_lab.isChecked():
+            colour_space = 'lab'
+
+        elif self.radioButton_to_dmc_rgb.isChecked():
+            colour_space = 'rgb'
+
+        new_colours = ui_funcs.to_dmc_colours(colours_list, self.colour_corres_list, colour_space)
+
+        self.model_listView_choosen_colours.clear()
+
+        for colour in new_colours:
+            self.add_colour_to_listview(colour)
 
 
 

@@ -81,8 +81,12 @@ def reduce_colours(img_rgb, final_colours):
 
     return final_img
 
-def dst(c1, c2):
-    return sqrt(pow(c2[0] - c1[0], 2) + pow(c2[1] - c1[1], 2) + pow(c2[2] - c1[2], 2))
+def dst(c1, c2, colour_space='lab'):
+    if colour_space == 'lab':
+        return sqrt(pow(c2[0] - c1[0], 2) + pow(c2[1] - c1[1], 2) + pow(c2[2] - c1[2], 2))
+    elif colour_space == 'rgb':
+        #https://www.compuphase.com/cmetric.htm
+        return sqrt(2 * pow(c2[0] - c1[0], 2) + 4 * pow(c2[1] - c1[1], 2) + 3 * pow(c2[2] - c1[2], 2))
 
 def get_similarity_matrix(listView_colours):
     list_size = listView_colours.rowCount()
@@ -145,27 +149,45 @@ def add_Lab(colours_list):
         colour_to_lab = cv2.cvtColor(np.asarray([[rgb_colour]]), cv2.COLOR_RGB2Lab)[0][0]
         colour['Lab'] = colour_to_lab
 
-def get_closest_colour(rgb_colour, colour_corres_list):
+def get_closest_colour(rgb_colour, colour_corres_list, colour_space='lab'):
     closest = [99999, None, None]
 
-    lab_colour = cv2.cvtColor(np.asarray([[rgb_colour]], dtype='float32') / 255, cv2.COLOR_RGB2Lab)[0][0]
+    if colour_space == 'lab':
 
-    for colour_in_list in colour_corres_list:
-        distance = dst(lab_colour, colour_in_list['Lab'])
-        if distance < closest[0]:
-            closest[0] = distance
-            closest[1] = colour_in_list
+        lab_colour = cv2.cvtColor(np.asarray([[rgb_colour]], dtype='float32') / 255, cv2.COLOR_RGB2Lab)[0][0]
+
+        for colour_in_list in colour_corres_list:
+            distance = dst(lab_colour, colour_in_list['Lab'])
+            if distance < closest[0]:
+                closest[0] = distance
+                closest[1] = colour_in_list
+
+    elif colour_space == 'rgb':
+
+        for colour_in_list in colour_corres_list:
+            distance = dst(rgb_colour, np.asarray((colour_in_list['RGB'] * 255), dtype='uint8'))
+            if distance < closest[0]:
+                closest[0] = distance
+                closest[1] = colour_in_list
 
     closest[2] = luminance(np.asarray(closest[1]['RGB']))
     return closest
 
+def to_dmc_colours(colours_list, colour_corres_list, colour_space='lab'):
+    new_colours = []
+
+    for colour in colours_list:
+        dmc_colour = get_closest_colour(colour, colour_corres_list, colour_space)
+        if dmc_colour not in new_colours:
+            new_colours.append(dmc_colour[1]['RGB'] * 255)
+
+    return new_colours
 
 def luminance(colour):
     """
         Compute the luminance of a colour, and return the adequate colour
         to write on the initial one (black or white).
     """
-    print(0.299 * colour[0] + 0.587 * colour[1] + 0.114 * colour[2])
     if (0.299 * colour[0] + 0.587 * colour[1] + 0.114 * colour[2]) > 0.5:
         return np.array([0, 0, 0])
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
-    <height>621</height>
+    <width>881</width>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -108,18 +108,18 @@
    <widget class="QListView" name="listView_choosen_colours">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>530</x>
       <y>90</y>
       <width>341</width>
-      <height>361</height>
+      <height>461</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_go">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>540</y>
+      <x>390</x>
+      <y>490</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -170,76 +170,14 @@
    <widget class="QPushButton" name="pushButton_save">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>540</y>
+      <x>390</x>
+      <y>520</y>
       <width>93</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
      <string>Save</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_delete_colour">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>460</y>
-      <width>93</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Delete</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_change_colour">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>460</y>
-      <width>93</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Change colour</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_add_colour">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>460</y>
-      <width>93</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add colour</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_merge_colours">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>490</y>
-      <width>93</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Merge</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinBox_merge_colours">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>490</y>
-      <width>42</width>
-      <height>22</height>
-     </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_pixel_perfect">
@@ -255,7 +193,7 @@
      <string>Pixel Perfect</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="groupBox_mouse_colour">
     <property name="geometry">
      <rect>
       <x>250</x>
@@ -310,8 +248,8 @@
    <widget class="QLabel" name="label_already_in_list">
     <property name="geometry">
      <rect>
-      <x>394</x>
-      <y>59</y>
+      <x>530</x>
+      <y>50</y>
       <width>331</width>
       <height>31</height>
      </rect>
@@ -325,18 +263,161 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_to_dmc_colours">
+   <widget class="QGroupBox" name="groupBox_colours">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>490</y>
-      <width>93</width>
-      <height>28</height>
+      <x>390</x>
+      <y>90</y>
+      <width>131</width>
+      <height>121</height>
      </rect>
     </property>
-    <property name="text">
-     <string>To DMC colour</string>
+    <property name="title">
+     <string>Colours</string>
     </property>
+    <widget class="QPushButton" name="pushButton_add_colour">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add colour</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_delete_colour">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>80</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_change_colour">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>50</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Change colour</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_auto_merging">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>220</y>
+      <width>131</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Auto-merging</string>
+    </property>
+    <widget class="QPushButton" name="pushButton_merge_colours">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Merge</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_merge_colours">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>20</y>
+       <width>42</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_colours_merging">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Threshold:</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_to_dmc">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>320</y>
+      <width>120</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>To DMC colours</string>
+    </property>
+    <widget class="QRadioButton" name="radioButton_to_dmc_lab">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>95</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>L*a*b*</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_to_dmc_rgb">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>95</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>RGB</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_to_dmc_colours">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>93</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>To DMC colour</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -344,7 +425,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>739</width>
+     <width>881</width>
      <height>26</height>
     </rect>
    </property>
