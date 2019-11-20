@@ -31,8 +31,12 @@ class Ui_MainWindow(object):
         self.pixel_perfect = None
         self.colour_corres_list = None
 
-        with open('colours.json', 'r') as json_colours_file:
-            self.colour_corres_list = json.load(json_colours_file)
+        try:
+            with open('res/colours.json', 'r') as json_colours_file:
+                self.colour_corres_list = json.load(json_colours_file)
+        except FileNotFoundError:
+            with open('../res/colours.json', 'r') as json_colours_file:
+                self.colour_corres_list = json.load(json_colours_file)
 
         ui_funcs.convert_rgb_to_numpy_array(self.colour_corres_list)
         ui_funcs.add_Lab(self.colour_corres_list)
