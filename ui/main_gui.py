@@ -35,8 +35,12 @@ class Ui_MainWindow(object):
             with open('res/colours.json', 'r') as json_colours_file:
                 self.colour_corres_list = json.load(json_colours_file)
         except FileNotFoundError:
-            with open('../res/colours.json', 'r') as json_colours_file:
-                self.colour_corres_list = json.load(json_colours_file)
+            try:
+                with open('../res/colours.json', 'r') as json_colours_file:
+                    self.colour_corres_list = json.load(json_colours_file)
+            except FileNotFoundError:
+                print('ERROR: can\'t find colour.json file. Are you sure the file is located in the folder (root or ui/)? Exiting...')
+                return
 
         ui_funcs.convert_rgb_to_numpy_array(self.colour_corres_list)
         ui_funcs.add_Lab(self.colour_corres_list)
