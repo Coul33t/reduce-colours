@@ -82,9 +82,6 @@ class Ui_MainWindow(object):
         self.pushButton_go = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_go.setGeometry(QtCore.QRect(390, 490, 93, 28))
         self.pushButton_go.setObjectName("pushButton_go")
-        self.pushButton_go_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_go_2.setGeometry(QtCore.QRect(390, 460, 93, 28))
-        self.pushButton_go_2.setObjectName("pushButton_go_2")
         self.pushButton_reset = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_reset.setGeometry(QtCore.QRect(10, 460, 93, 28))
         self.pushButton_reset.setObjectName("pushButton_reset")
@@ -180,7 +177,6 @@ class Ui_MainWindow(object):
         self.label_n_colours.setText(_translate("MainWindow", "Final number of colours:"))
         self.pushButton_n_colours.setText(_translate("MainWindow", "Ok"))
         self.pushButton_go.setText(_translate("MainWindow", "Go!"))
-        self.pushButton_go_2.setText("Symbols!")
         self.pushButton_reset.setText(_translate("MainWindow", "Reset"))
         self.label_total_number_of_colour.setText(_translate("MainWindow", "Total Number of colours:"))
         self.pushButton_save.setText(_translate("MainWindow", "Save"))
@@ -213,7 +209,6 @@ class Ui_MainWindow(object):
         self.pushButton_n_colours.hide()
         self.label_already_in_list.hide()
         self.pushButton_go.hide()
-        self.pushButton_go_2.hide()
         self.pushButton_reset.hide()
         self.label_total_number_of_colour.hide()
         self.pushButton_save.hide()
@@ -231,7 +226,6 @@ class Ui_MainWindow(object):
         self.pushButton_n_colours.show()
         self.label_already_in_list.show()
         self.pushButton_go.show()
-        self.pushButton_go_2.show()
         self.pushButton_reset.show()
         self.label_total_number_of_colour.show()
         self.pushButton_save.show()
@@ -249,7 +243,6 @@ class Ui_MainWindow(object):
         self.pushButton_import.clicked.connect(self.select_file)
         self.pushButton_n_colours.clicked.connect(self.get_colours)
         self.pushButton_go.clicked.connect(self.generate_output)
-        self.pushButton_go_2.clicked.connect(self.generate_output_2)
         self.pushButton_reset.clicked.connect(self.reset_displayed_image)
         self.pushButton_save.clicked.connect(self.save_output_image)
         self.pushButton_add_colour.clicked.connect(self.add_colour_from_picker)
@@ -452,9 +445,6 @@ class Ui_MainWindow(object):
         self.label_original_image.setPixmap(reference_img)
 
         self.label_image_generation.setText('Image generated!')
-
-    def generate_output_2(self):
-        return
 
     def reset_displayed_image(self):
         reference_img = QtGui.QPixmap.fromImage(self.resized_initial_img)
