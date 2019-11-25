@@ -301,7 +301,7 @@ class Ui_MainWindow(object):
 
         closest = ui_funcs.get_closest_colour(colour_to_add, self.colour_corres_list)
         rgb_value = f'({int(colour_to_add[0])},{int(colour_to_add[1])},{int(colour_to_add[2])})'
-        item = QtGui.QStandardItem(f'{closest[1]["DMC Name"]} {rgb_value}')
+        item = QtGui.QStandardItem(f'{closest[1]["Floss"]} {closest[1]["DMC Name"]} {rgb_value}')
 
         item.setForeground((QtGui.QColor(int(closest[2][0] * 255),
                                          int(closest[2][1] * 255),
