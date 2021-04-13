@@ -109,10 +109,19 @@ def merge_colours(img_rgb, final_colour_number, all_colours_rgb):
 def dst(c1, c2):
     return sqrt(pow(c2[0] - c1[0], 2) + pow(c2[1] - c1[1], 2) + pow(c2[2] - c1[2], 2))
 
+# return : file to convert, number of color
+def parser():
+    parser = argparse.ArgumentParser(description="Reduce the color number of a given file.")
+    parser.add_argument("filename", metavar="filename", type=str,nargs=1, help="the path of the image")
+    parser.add_argument("final_color_number", metavar="N", type=int, nargs='?', default=4, help="the final number of colors")
+    args = parser.parse_args()
+    return args.filename[0], args.final_color_number
+
 def main():
-    final_colour_number = 4
+    filename, final_colour_number = parser()
+    
     # img = cv2.imread('tortank.png')
-    img = Image.open('dracaufeu.png').convert('RGB')
+    img = Image.open(filename).convert('RGB')
 
     # sRGB instead of RGB ([0, 1] instead of [0, 255])
     img_rgb_data = np.asarray(img) / 255
